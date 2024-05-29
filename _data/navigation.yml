@@ -1,9 +1,10 @@
 main:
-  - title: "Posts"
-    url: /posts/
-  - title: "Categories"
-    url: /categories/
-  - title: "Tags"
-    url: /tags/
-  - title: "About"
-    url: /about/
+
+  - title: "Home"
+    url: /
+  - title: "Cheatsheet"
+    url: /cheatsheet/
+  - title: "Resource links"
+    url: /resources/
+  - title: "BufferOverflow"
+    url: /overflow/
