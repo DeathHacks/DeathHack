@@ -4,6 +4,7 @@ permalink: /cheatsheet/
 layout: single
 author_profile: true
 toc: true
+search : true
 
 ---
 
