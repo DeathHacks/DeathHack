@@ -19,9 +19,8 @@ description: >- # this means to ignore newlines until "baseurl:"
   Offensive Cyber Resources
 minimal_mistakes_skin: "dark"
 search: true
-lunr:
-  search_within_pages: true
-  search_full_content: true
+google:
+  search_engine_id: c04ec5da23f5f49d8
 
 # Build settings
 markdown: kramdown
