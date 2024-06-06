@@ -66,3 +66,5 @@ Further resources
 
 [Denizhalil Guides](https://denizhalil.com/)
 
+[Mateodevv CPTS Notes](https://github.com/Mateodevv/CPTS-Notes/tree/main)
+
