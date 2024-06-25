@@ -763,6 +763,13 @@ https://raw.githubusercontent.com/flozz/p0wny-shell/master/shell.php
 Then click on Add content -> Select Basic Page or Article -> Write php shellcode on the body -> Select PHP code in Text format -> Select Preview
 ```
 
+### Owncloud
+
+#### Enumerate version
+```
+Number of interesting PHP files within the root.  /owncloud/status.php provides version.  
+```
+
 ### Squiz Matrix
 
 #### Interesting Locations
@@ -772,7 +779,13 @@ Then click on Add content -> Select Basic Page or Article -> Write php shellcode
 /_admin
 
 ```
+### Kentico 
+```
+Able to get rough version based on help documentation. From there look at hotfix documentation to attempt to find fixed vulnerability which can then be tracked down. E.G  https[:]//SITE[.]com.au/CMSPages/Staging/SyncServer.asmx?op=ProcessSynchronizationTaskData present indiciates CVE-2019-10068
+[Kentico Patchnotes](https://devnet.kentico.com/download/hotfixes) 
 
+
+```
 ### Joomla
 
 #### Enumeration - Joomla
