@@ -297,6 +297,28 @@ sudo pip3 install argcomplete && sudo activate-global-python-argcomplete
 | `head/tail -n20 facebook.com_crt.sh.txt`                                                                           | To view the top/bottom 20 lines from a file                                                                                                                                        |
 | [TheHarvester](https://github.com/laramies/theHarvester)                                                           | The tool collects emails, names, subdomains, IP addresses, and URLs from various public data sources for passive information gathering. For now, we will use the following modules |
 
+### Using Certificate transparcy logs
+
+```
+Using a combination of [Gungnir](https://github.com/g0ldencybersec/gungnir) with [anew](https://github.com/tomnomnom/anew) and [httpx](https://github.com/projectdiscovery/httpx), you can create a automated workflow to review transparency logs for new "broadcasts", these can then be fed to httpx, via burp proxy for web scrapping but also passive(or active) scanning using burp. 
+
+gungnir -r Rootdomains.txt | anew Addeddomains.txt | httpx -proxy http://127.0.0.1:8080 -sc -td -ss -server -title -ip -srd ./Gungnir/ -o NAME
+
+Explanation of Httpx Flags:
+-proxy http://127.0.0.1:8080: Use a proxy.
+-sc: Show response status code.
+-td: Show response time duration.
+-ss: Show server name.
+-server: Show response server header.
+-title: Show page title.
+-ip: Show IP address of the server.
+-srd ./Gungnir/: Directory to save response bodies.
+-o NAME: Output file for results.
+
+This setup ensures that only new domains are scanned by Httpx, leveraging Gungnir for subdomain discovery and Anew for filtering new entries.
+
+```
+
 ### Sources.txt
 
 ```txt
