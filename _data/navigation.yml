@@ -4,7 +4,5 @@ main:
     url: /
   - title: "Cheatsheet"
     url: /cheatsheet/
-  - title: "Resource links"
-    url: /resources/
-  - title: "BufferOverflow"
-    url: /overflow/
+  - title: "Get in touch"
+    url: mailto:cybersecurity@error418.co
