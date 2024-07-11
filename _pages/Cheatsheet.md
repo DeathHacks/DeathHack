@@ -713,6 +713,10 @@ python crawleet.py -u <URL> -b -d 3 -e jpg,png,css -f -m -s -x php,txt -y --thre
 ### Wordpress
 
 ```
+# Get Version  
+Within /feed/  
+example <generator>https://wordpress.org/?v=5.8.10</generator> 
+
 # Scan
 wpscan --rua -e --url <URL>
 
