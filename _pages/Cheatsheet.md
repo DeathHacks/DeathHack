@@ -4583,6 +4583,7 @@ Invoke-BloodHound -CollectionMethod All --LdapUsername <UserName> --LdapPassword
 
 [Tbhhaxor Exploiting Linux Capabilities Part 1](https://tbhaxor.com/exploiting-linux-capabilities-part-1/)
 [Tbhhaxor Exploiting Linux Capabilities Part 2](https://tbhaxor.com/exploiting-linux-capabilities-part-2/)
+[HackTricks on Linux Capabilities](https://book.hacktricks.xyz/linux-hardening/privilege-escalation/linux-capabilities#linux-capabilities)
 
 | **Capability** | **Description** |
 | --- | --- |
