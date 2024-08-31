@@ -4581,11 +4581,15 @@ Invoke-BloodHound -CollectionMethod All --LdapUsername <UserName> --LdapPassword
 | [CVE-2021-36934 (HiveNightmare/SeriousSAM)](https://github.com/cube0x0/CVE-2021-36934)                                                                                                                  |                                                                                                                                                                |
 ### Capabilities 
 
-```
-Find files with capabilities set within defined locations  
+[Tbhhaxor Exploiting Linux Capabilities Part 1](https://tbhaxor.com/exploiting-linux-capabilities-part-1/)
+[Tbhhaxor Exploiting Linux Capabilities Part 2](https://tbhaxor.com/exploiting-linux-capabilities-part-2/)
 
-find /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin -type f -exec getcap {} \; 
-```
+| **Capability** | **Description** |
+| --- | --- |
+| `find /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin -type f -exec getcap {} \; ` | Find applications with capabilities set within specific path |
+| `getcap -r / 2>/dev/null` | Find applications with set recursive |
+
+
 | **Capability** | **Description** |
 | --- | --- |
 | `cap_sys_admin` | Allows to perform actions with administrative privileges, such as modifying system files or changing system settings. |
@@ -4605,6 +4609,7 @@ Some Capabilities can be used to escalated privilege
 | `cap_setgid` | Allows to set its effective group ID, which can be used to gain the privileges of another group, including the `root` group. |
 | `cap_sys_admin` | This capability provides a broad range of administrative privileges, including the ability to perform many actions reserved for the `root` user, such as modifying system settings and mounting and unmounting file systems. |
 | `cap_dac_override` | Allows bypassing of file read, write, and execute permission checks. |
+
 
 
 ### Linux Containers 
