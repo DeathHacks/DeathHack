@@ -4585,6 +4585,8 @@ Invoke-BloodHound -CollectionMethod All --LdapUsername <UserName> --LdapPassword
 [Tbhhaxor Exploiting Linux Capabilities Part 2](https://tbhaxor.com/exploiting-linux-capabilities-part-2/)
 [HackTricks on Linux Capabilities](https://book.hacktricks.xyz/linux-hardening/privilege-escalation/linux-capabilities#linux-capabilities)
 
+Linux capabilities are a security feature in the Linux operating system that allows specific privileges to be granted to processes, allowing them to perform specific actions that would otherwise be restricted
+
 | **Capability** | **Description** |
 | --- | --- |
 | `find /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin -type f -exec getcap {} \; ` | Find applications with capabilities set within specific path |
