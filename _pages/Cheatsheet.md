@@ -4587,8 +4587,11 @@ Invoke-BloodHound -CollectionMethod All --LdapUsername <UserName> --LdapPassword
 
 Linux capabilities are a security feature in the Linux operating system that allows specific privileges to be granted to processes, allowing them to perform specific actions that would otherwise be restricted
 
-| **Capability** | **Description** |
+
+
+| **Command** | **Description** |
 | --- | --- |
+| `LINPEAS WILL HIGHLIGHT EXPLOITABLE CAPABILITIES` | |
 | `find /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin -type f -exec getcap {} \; ` | Find applications with capabilities set within specific path |
 | `getcap -r / 2>/dev/null` | Find applications with set recursive |
 
