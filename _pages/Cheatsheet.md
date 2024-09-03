@@ -4323,7 +4323,7 @@ dir /b/s "<FILE>"
 
 ### Trust Relationships - Cross-Forest 
 
-| Command                                                      | Description                                                  |
+| **Command**   | **Description**  |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | `Get-DomainUser -SPN -Domain FREIGHTLOGISTICS.LOCAL \| select SamAccountName` | PowerView tool used to enumerate accounts for associated `SPNs` from a Windows-based host. |
 | `Get-DomainUser -Domain FREIGHTLOGISTICS.LOCAL -Identity mssqlsvc \| select samaccountname,memberof` | PowerView tool used to enumerate the `mssqlsvc` account from a Windows-based host. |
