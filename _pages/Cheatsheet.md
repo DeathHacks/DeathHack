@@ -4795,15 +4795,15 @@ Invoke-BloodHound -CollectionMethod All --LdapUsername <UserName> --LdapPassword
 ### Local Privilege Escalation
 
 | **Tool** | **Description** |
-| --- | --- |
-| (Windows Privilege Escalation CheatSheet)[https://github.com/nickvourd/Windows_Privilege_Escalation_CheatSheet]| Cheat Sheet for Windows Local Privilege Escalation |
-| (Juicy Potato)[https://github.com/ohpe/juicy-potato]    | Abuse SeImpersonate or SeAssignPrimaryToken Privileges for System Impersonation :warning: Works only until Windows Server 2016 and Windows 10 until patch 1803 |
-| (Lovely Potato)[https://github.com/TsukiCTF/Lovely-Potato]  | Automated Juicy Potato :warning: Works only until Windows Server 2016 and Windows 10 until patch 1803     |
-| (PrintSpoofer)[https://github.com/itm4n/PrintSpoofer]   | Exploit the PrinterBug for System Impersonation :pray: Works for Windows Server 2019 and Windows 10    |
-| (RoguePotato)[https://github.com/antonioCoco/RoguePotato]     | Upgraded Juicy Potato :pray: Works for Windows Server 2019 and Windows 10    |
-| (Abusing Token Privileges)[https://foxglovesecurity.com/2017/08/25/abusing-token-privileges-for-windows-local-privilege-escalation/]   |    |
-| (SMBGhost CVE-2020-0796)[https://blog.zecops.com/vulnerabilities/exploiting-smbghost-cve-2020-0796-for-a-local-privilege-escalation-writeup-and-poc/] |    (PoC)[https://github.com/danigargu/CVE-2020-0796]  |
-| (CVE-2021-36934 (HiveNightmare/SeriousSAM))[https://github.com/cube0x0/CVE-2021-36934]  | | 
+| --- | ----------- |
+| [Windows Privilege Escalation CheatSheet](https://github.com/nickvourd/Windows_Privilege_Escalation_CheatSheet)| Cheat Sheet for Windows Local Privilege Escalation |
+| [Juicy Potato](https://github.com/ohpe/juicy-potato)    | Abuse SeImpersonate or SeAssignPrimaryToken Privileges for System Impersonation :warning: Works only until Windows Server 2016 and Windows 10 until patch 1803 |
+| [Lovely Potato](https://github.com/TsukiCTF/Lovely-Potato)  | Automated Juicy Potato :warning: Works only until Windows Server 2016 and Windows 10 until patch 1803     |
+| [PrintSpoofer](https://github.com/itm4n/PrintSpoofer)   | Exploit the PrinterBug for System Impersonation :pray: Works for Windows Server 2019 and Windows 10    |
+| [RoguePotato](https://github.com/antonioCoco/RoguePotato)     | Upgraded Juicy Potato :pray: Works for Windows Server 2019 and Windows 10    |
+| [Abusing Token Privileges](https://foxglovesecurity.com/2017/08/25/abusing-token-privileges-for-windows-local-privilege-escalation/)   |    |
+| [SMBGhost CVE-2020-0796](https://blog.zecops.com/vulnerabilities/exploiting-smbghost-cve-2020-0796-for-a-local-privilege-escalation-writeup-and-poc/) |    [PoC](https://github.com/danigargu/CVE-2020-0796)  |
+| [CVE-2021-36934 HiveNightmare/SeriousSAM](https://github.com/cube0x0/CVE-2021-36934)  | | 
 
 ### Useful Local Priv Esc Tools
 
