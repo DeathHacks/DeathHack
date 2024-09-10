@@ -2891,11 +2891,6 @@ apt update hooking (PreInvoke)
 
 #### Permission Groups
 
-##### Additional Information
-
-[User Rights Assignments](https://4sysops.com/archives/user-rights-assignment-in-windows-server-2016/)
-
-
 | **Group** | **Description** |
 | --- | --- |
 | Default Administrators | Domain Admins and Enterprise Admins are "super" groups. |
@@ -2909,6 +2904,11 @@ apt update hooking (PreInvoke)
 | Group Policy Creator Owners | Members can create new GPOs but would need to be delegated additional permissions to link GPOs to a container such as a domain or OU. |
 | Schema Admins | Members can modify the Active Directory schema structure and backdoor any to-be-created Group/GPO by adding a compromised account to the default object ACL. |
 | DNS Admins | Members can load a DLL on a DC, but do not have the necessary permissions to restart the DNS server. They can load a malicious DLL and wait for a reboot as a persistence mechanism. Loading a DLL will often result in the service crashing. A more reliable way to exploit this group is to [create a WPAD record](https://web.archive.org/web/20231115070425/https://cube0x0.github.io/Pocing-Beyond-DA/). |
+
+##### Additional Information
+
+[User Rights Assignments](https://4sysops.com/archives/user-rights-assignment-in-windows-server-2016/)
+
 
 #### User Rights Assignments 
 
