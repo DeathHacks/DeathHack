@@ -2924,6 +2924,15 @@ apt update hooking (PreInvoke)
 | SeLoadDriverPrivilege | [Load and unload device drivers](https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/load-and-unload-device-drivers) | Administrators | This policy setting determines which users can dynamically load and unload device drivers. This user right is not required if a signed driver for the new hardware already exists in the driver.cab file on the device. Device drivers run as highly privileged code. |
 | SeRestorePrivilege | [Restore files and directories](https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/restore-files-and-directories) | Administrators | This security setting determines which users can bypass file, directory, registry, and other persistent object permissions when they restore backed up files and directories. It determines which users can set valid security principals as the owner of an object. |
 
+##### Enabling SeTakeOvershipPrivilege
+
+| **Command** | **Description** |
+| --- | --- |
+| [Enable SeTakeOwnership Priv](https://raw.githubusercontent.com/fashionproof/EnableAllTokenPrivs/master/EnableAllTokenPrivs.ps1) | We can enable it using this script which is detailed in this blog post, as well as this one which builds on the initial concept. |
+| `Import-Mobule .\Enable-Privilege.ps1` |  Import module with powershell |
+| `.\EnablingAllTokenPrivs.ps1` | Run script |
+| `whoami /priv` | Check privilege |
+
 ### Handy Commands
 
 | **Command** | **Description** |
