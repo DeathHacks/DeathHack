@@ -505,7 +505,7 @@ sudo -sU -sS -sCV -oA <NAME>.udp <IP> -v
 |Mitel Micollab|`view source of HOST/ucs/micollab/ , Full version within source. >v9.4sp2 vulnerable to Log4j`|
 |OnPrem Exchange|`/EWS/Exchange.asmx full version of server within response header`|
 |Sharepoint Server|`Able to fingerprint version of Sharepoint via either null login attempt (Return header) or /_vti_pvt/service.cnf. `|
-|VMWare Horizon| `/portal/info.jsp  vmware client version , able to enumate version via download link/documentation E.G 2203 means using 2111 connection server `|
+|VMWare Horizon| `/portal/info.jsp may also be /appblast/info.jsp  vmware client version , able to enumate version via download link/documentation E.G 2203 means using 2111 connection server `|
 
 ## AUTORECON
 
@@ -2933,6 +2933,7 @@ apt update hooking (PreInvoke)
 | `.\EnablingAllTokenPrivs.ps1` | Run script |
 | `whoami /priv` | Check privilege |
 
+
 ##### Takeover File Ownership
 
 | **Command** | **Description** |
@@ -2957,6 +2958,18 @@ c:\inetpub\wwwwroot\web.config
 
 We may also come across .kdbx KeePass database files, OneNote notebooks, files such as passwords.*, pass.*, creds.*, scripts, other configuration files, virtual hard drive files, and more that we can target to extract sensitive information from to elevate our privileges and further our access.
 ```
+
+##### Enabling SeBackupPrivilege
+
+| **Command** | **Description** | 
+| --- | --- |
+| | |
+| | |
+| | |
+
+
+
+
 
 ### Handy Commands
 
