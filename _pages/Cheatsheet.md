@@ -2924,6 +2924,8 @@ apt update hooking (PreInvoke)
 | SeLoadDriverPrivilege | [Load and unload device drivers](https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/load-and-unload-device-drivers) | Administrators | This policy setting determines which users can dynamically load and unload device drivers. This user right is not required if a signed driver for the new hardware already exists in the driver.cab file on the device. Device drivers run as highly privileged code. |
 | SeRestorePrivilege | [Restore files and directories](https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/restore-files-and-directories) | Administrators | This security setting determines which users can bypass file, directory, registry, and other persistent object permissions when they restore backed up files and directories. It determines which users can set valid security principals as the owner of an object. |
 
+---
+
 ##### SeTakeOwnershipPrivilege
 
 | **Command** | **Description** |
@@ -2933,6 +2935,7 @@ apt update hooking (PreInvoke)
 | `.\EnablingAllTokenPrivs.ps1` | Run script |
 | `whoami /priv` | Check privilege |
 
+---
 
 ##### Takeover File Ownership
 
@@ -2958,6 +2961,7 @@ c:\inetpub\wwwwroot\web.config
 
 We may also come across .kdbx KeePass database files, OneNote notebooks, files such as passwords.*, pass.*, creds.*, scripts, other configuration files, virtual hard drive files, and more that we can target to extract sensitive information from to elevate our privileges and further our access.
 ```
+---
 
 ##### SeBackupPrivilege
 
@@ -2972,7 +2976,7 @@ This can allow for attacks on the DC including copying protected files such as N
 | `whoami /priv \| findstr Backup` | Priv check |
 | `SetBackupPrivilege`| Enables BackupPriv right |
 | `Get-SeBackupPrivilege` | Checks for right once module imported |
-| ` Copy-FileSeBackupPrivilege 'C:\Confidential\2021 Contract.txt' .\Contract.txt `| Copy Protected file once priv enabled | 
+| `Copy-FileSeBackupPrivilege 'C:\Confidential\2021 Contract.txt' .\Contract.txt`| Copy Protected file once priv enabled | 
 
 With the priv now enabled, we can focus on attacking the NTDS file, by first making a copy of the disk using diskshadow. As we are unable to fully interact with the NTDS.dit file as it is in use, unlike a copied version.  
 
@@ -3035,6 +3039,8 @@ We can achieve similar using SecretsDump to dump hashes locally for use with Pas
 The built-in utility robocopy can be used to copy files in backup mode as well. Robocopy is a command-line directory replication tool. It can be used to create backup jobs and includes features such as multi-threaded copying, automatic retry, the ability to resume copying, and more. Robocopy differs from the copy command in that instead of just copying all files, it can check the destination directory and remove files no longer in the source directory.
 
 `robocopy /B E:\Windows\NTDS .\ntds ntds.dit` 
+
+---
 
 ### Handy Commands
 
