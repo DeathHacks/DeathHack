@@ -2889,6 +2889,46 @@ apt update hooking (PreInvoke)
 | `gci \\.\pipe\` | List named pipes with PowerShell |
 | `accesschk.exe /accepteula \\.\Pipe\lsass -v` | Review permissions on a named pipe |
 
+### Windows Application Specific
+
+#### Windows installed programs 
+
+Script to get list of installed programs from various locations within registry 
+```
+$INSTALLED = Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* |  Select-Object DisplayName, DisplayVersion, InstallLocation
+$INSTALLED += Get-ItemProperty HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\* | Select-Object DisplayName, DisplayVersion, InstallLocation
+$INSTALLED | ?{ $_.DisplayName -ne $null } | sort-object -Property DisplayName -Unique | Format-Table -AutoSize
+```
+---
+
+#### mRemoteNG
+
+mRemoteNG is a fork of mRemote: an open source, tabbed, multi-protocol, remote connections manager for Windows
+
+##### Attacking mRemoteNG
+
+mRemoteNG saves connection info and credentials to a file called confCons.xml. They use a hardcoded master password, mR3m, so if anyone starts saving credentials in mRemoteNG and does not protect the configuration with a password, we can access the credentials from the configuration file and decrypt them.
+
+By default, the configuration file is located in `%USERPROFILE%\APPDATA\Roaming\mRemoteNG.`
+
+The Configuration File `confCons.xml` contains the following elements
+
+` Connections ` is the document root, and contains information about the encryption used for the credentials and the attribute ` Protected `
+
+We can use the ` Connections ` string to crack the master password. 
+
+Further within the XML document are elements named ` Nodes ` within the root element. They contain information about the remote syustem, such as `username`, `domain` , `hostname` , `protocol used` and the `password(Encrypted)`. These fields are plaintext except for the `Password` which is encrypted with the `Master Password`
+
+if the user didn't set a custom master password, we can use the script [mRemoteNG-Decrypt](https://github.com/haseebT/mRemoteNG-Decrypt) to decrypt the password. We need to copy the attribute Password content and use it with the option `-s`. If there's a master password and we know it, we can then use the option `-p` with the custom master password to also decrypt the password.
+
+#### For Loop to Crack the Master Password with mremoteng_decrypt
+```
+for password in $(cat /usr/share/wordlists/fasttrack.txt);do echo $password; python3 mremoteng_decrypt.py -s "EBHmUA3DqM3sHushZtOyanmMowr/M/hd8KnC3rUJfYrJmwSj+uGSQWvUWZEQt6wTkUqthXrf2n8AR477ecJi5Y0E/kiakA==" -p $password 2>/dev/null;done 
+```
+
+
+---
+
 ### Rights, Privileges and Permissions 
 
 #### Permission Groups
@@ -3309,6 +3349,7 @@ There is no command-line version of the GUI consent prompt, so its necessary to 
 | `Import-Module .\PowerUp.ps1 & Write-UserAddMSI` | Import [PowerUp](https://github.com/PowerShellEmpire/PowerTools/blob/master/PowerUp/PowerUp.ps1) and create malicious msi to create backdoor user |
 | `runas /user:backdoor cmd` | Run as created user, in this case backdoor |
 | [Bypass UAC](https://github.com/FuzzySecurity/PowerShell-Suite/tree/master/Bypass-UAC)| Github repo full of useful tricks and tips to bypass UAC |
+| `dir "C:\Program Files"`| Basic info on installed files present within Program Files |
 
 
 
@@ -3429,9 +3470,6 @@ $lnk.Save()
 | [LaZagne](https://github.com/AlessandroZ/LaZagne) | Tool used for retrieving passwords stored on a local machine from web browsers, chat tools, databases, Git, email, memory dumps, PHP, sysadmin tools, wireless network configurations, internal Windows password storage mechanisms, and more |
 | [Windows Exploit Suggester - Next Generation](https://github.com/bitsadmin/wesng) | WES-NG is a tool based on the output of Windows' `systeminfo` utility which provides the list of vulnerabilities the OS is vulnerable to, including any exploits for these vulnerabilities. Every Windows OS between Windows XP and Windows 10, including their Windows Server counterparts, is supported |
 | [Sysinternals Suite](https://docs.microsoft.com/en-us/sysinternals/downloads/sysinternals-suite) | We will use several tools from Sysinternals in our enumeration including [AccessChk](https://docs.microsoft.com/en-us/sysinternals/downloads/accesschk), [PipeList](https://docs.microsoft.com/en-us/sysinternals/downloads/pipelist), and [PsService](https://docs.microsoft.com/en-us/sysinternals/downloads/psservice) |
-
-
-### Enumeration scripts
 
 
 
