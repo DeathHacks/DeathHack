@@ -5,7 +5,7 @@ layout: single
 author_profile: true
 toc: true
 search : true
-
+ 
 ---
 
 # Basics 
@@ -6304,7 +6304,7 @@ Detailed Articles:
 
 ### AD Mindmap
 
-[MindMap](https://orange-cyberdefense.github.io/ocd-mindmaps/img/pentest_ad_dark_2022_11.svg)
+[MindMap](https://orange-cyberdefense.github.io/ocd-mindmaps/img/pentest_ad_dark_2023_02.svg)
 
 ## Misc
 
