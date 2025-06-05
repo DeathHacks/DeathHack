@@ -51,7 +51,7 @@ plugins:
 
 author:
   name: "DeathHack"
-  avatar: "/assets/images/bio-photo.jpg"
+  avatar: 
   bio: "Nik <br>
   Vulnerability Analyst / Offensive Security / Intel Goblin<br>  
   Founder of Error418 Cyber Security" # Note: Markdown is allowed
