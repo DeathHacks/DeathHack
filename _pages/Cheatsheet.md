@@ -4532,41 +4532,42 @@ dir /b/s "<FILE>"
 
 ### SharpView Cheatsheet 
 
-| Command                                                      | Description                                                  |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| `Get-DomainPolicy` | View the domain password policy |
-| `.\SharpView.exe ConvertTo-SID -Name sally.jones`            | Convert a username to a SID |
-| `.\SharpView.exe Convert-ADName -ObjectName S-1-5-21-2974783224-3764228556-2640795941-1724` | Convert a SID to a username |
-| `Get-DomainUser harry.jones  \| ConvertFrom-UACValue -showall` | List all UAC values |
-| `.\SharpView.exe Get-Domain` | View information about the current domain |
-| `.\SharpView.exe Get-DomainOU` | List all OUs |
-| `.\SharpView.exe Get-DomainUser -KerberosPreauthNotRequired` | Find ASREPRoastable users |
-| `Get-DomainComputer ` | Get a listing of domain computers |
-| `.\SharpView.exe Get-DomainGPO  \| findstr displayname` | List all GPO names |
-| ` Get-DomainGPO -ComputerIdentity WS01` | List GPOs on a specific host |
-| `Test-AdminAccess -ComputerName SQL01` | Test local admin access on a remote host |
-| `.\SharpView.exe Get-NetShare -ComputerName SQL01` | Enumerate open shares on a remote computer |
-| `Find-DomainUserLocation` | Find machines where domain users are logged in |
-| `Get-DomainTrust` | View a list of domain trusts |
-| `(Get-DomainUser).count` | Count all domain users |
-| `.\SharpView.exe Get-DomainUser -Help` | Get help about a SharpView function |
-| `Get-DomainUser -Properties samaccountname,description \| Where {$_.description -ne $null}` | Find non-blank user description fields |
-| `.\SharpView.exe Get-DomainUser -SPN` | Find users with SPNs set |
-| `Find-ForeignGroup` | Find foreign domain users |
-| `Get-DomainGroup -Properties Name` | List domain groups |
-| `.\SharpView.exe Get-DomainGroupMember -Identity 'Help Desk'` | Get members of a domain group |
-| `.\SharpView.exe Get-DomainGroup -AdminCount` | List protected groups |
-| `.\SharpView.exe Find-ManagedSecurityGroups` | List managed security groups |
-| `Get-NetLocalGroup -ComputerName WS01` |  Get local groups on a host |
-| `.\SharpView.exe Get-NetLocalGroupMember -ComputerName WS01` | Get members of a local group |
-| `.\SharpView.exe Get-DomainComputer -Unconstrained` | Find computers that allow unconstrained delegation |
-| `Get-DomainComputer -TrustedToAuth` | Find computers set with constrained delegation |
-| `Get-DomainObjectAcl -Identity harry.jones` | Enumerate ACLs on a user |
-| `Find-InterestingDomainAcl` | Find objects in the domain with modification rights over non built-in objects| 
-| `Get-PathAcl "\\SQL01\DB_backups"` | Find the ACLs set on a directory |
-| ` gpresult /r /S WS01` | Get a report of all GPOs applied to a host |
-| ` Get-DomainGPO  \| Get-ObjectAcl` | Find GPO permissions |
-| `Get-DomainTrustMapping` | Enumerate trusts for our domain/reachable domains |
+| Command                                                                                                       | Description                                                   |
+|---------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------|
+| `Get-DomainPolicy`                                                                                           | View the domain password policy                               |
+| `.\SharpView.exe ConvertTo-SID -Name sally.jones`                                                             | Convert a username to a SID                                   |
+| `.\SharpView.exe Convert-ADName -ObjectName S-1-5-21-2974783224-3764228556-2640795941-1724`                  | Convert a SID to a username                                   |
+| `Get-DomainUser harry.jones \| ConvertFrom-UACValue -showall`                                                | List all UAC values                                           |
+| `.\SharpView.exe Get-Domain`                                                                                  | View information about the current domain                     |
+| `.\SharpView.exe Get-DomainOU`                                                                                | List all OUs                                                  |
+| `.\SharpView.exe Get-DomainUser -KerberosPreauthNotRequired`                                                 | Find ASREPRoastable users                                     |
+| `Get-DomainComputer`                                                                                          | Get a listing of domain computers                             |
+| `.\SharpView.exe Get-DomainGPO \| findstr displayname`                                                       | List all GPO names                                            |
+| `Get-DomainGPO -ComputerIdentity WS01`                                                                        | List GPOs on a specific host                                  |
+| `Test-AdminAccess -ComputerName SQL01`                                                                        | Test local admin access on a remote host                      |
+| `.\SharpView.exe Get-NetShare -ComputerName SQL01`                                                            | Enumerate open shares on a remote computer                    |
+| `Find-DomainUserLocation`                                                                                     | Find machines where domain users are logged in                |
+| `Get-DomainTrust`                                                                                             | View a list of domain trusts                                  |
+| `(Get-DomainUser).count`                                                                                      | Count all domain users                                        |
+| `.\SharpView.exe Get-DomainUser -Help`                                                                        | Get help about a SharpView function                           |
+| `Get-DomainUser -Properties samaccountname,description \| Where {$_.description -ne $null}`                  | Find non-blank user description fields                        |
+| `.\SharpView.exe Get-DomainUser -SPN`                                                                         | Find users with SPNs set                                      |
+| `Find-ForeignGroup`                                                                                           | Find foreign domain users                                     |
+| `Get-DomainGroup -Properties Name`                                                                            | List domain groups                                            |
+| `.\SharpView.exe Get-DomainGroupMember -Identity 'Help Desk'`                                                | Get members of a domain group                                 |
+| `.\SharpView.exe Get-DomainGroup -AdminCount`                                                                 | List protected groups                                         |
+| `.\SharpView.exe Find-ManagedSecurityGroups`                                                                  | List managed security groups                                  |
+| `Get-NetLocalGroup -ComputerName WS01`                                                                        | Get local groups on a host                                    |
+| `.\SharpView.exe Get-NetLocalGroupMember -ComputerName WS01`                                                 | Get members of a local group                                  |
+| `.\SharpView.exe Get-DomainComputer -Unconstrained`                                                           | Find computers that allow unconstrained delegation            |
+| `Get-DomainComputer -TrustedToAuth`                                                                           | Find computers set with constrained delegation                |
+| `Get-DomainObjectAcl -Identity harry.jones`                                                                   | Enumerate ACLs on a user                                      |
+| `Find-InterestingDomainAcl`                                                                                   | Find objects with modification rights over non built-in objects |
+| `Get-PathAcl "\\SQL01\DB_backups"`                                                                            | Find the ACLs set on a directory                              |
+| `gpresult /r /S WS01`                                                                                         | Get a report of all GPOs applied to a host                    |
+| `Get-DomainGPO \| Get-ObjectAcl`                                                                              | Find GPO permissions                                          |
+| `Get-DomainTrustMapping`                                                                                      | Enumerate trusts for our domain/reachable domains             |
+
 
 #### Sharpview Domain/LDAP Functions 
 
@@ -4582,6 +4583,13 @@ dir /b/s "<FILE>"
 | `Find-DomainObjectPropertyOutlier` | Finds user/group/computer objects in AD that have 'outlier' properties set                        |
 | `Get-DomainUser`                   | Returns all users or specific user objects in AD                                                  |
 | `(Get-DomainUser).count`           | Return count of how many users are in target domain                                               |
+| `Get-DomainUser * -Domain DOMAIN \| Select-Object -Property name,samaccountname,description,memberof,whencreated,pwdlastset,lastlogontimestamp,accountexpires,admincount,userprincipalname,serviceprincipalname,mail,useraccountcontrol \| Export-Csv .\DOMAIN_users.csv -NoTypeInformation` | Enumerate all domain users and export to CSV |
+| `.\SharpView.exe Get-DomainUser -KerberosPreauthNotRequired -Properties samaccountname,useraccountcontrol,memberof` | Obtain list of all users that do not require Kerberos pre-auth for ASREPRoast attack potential |
+| `.\SharpView.exe Get-DomainUser -TrustedToAuth -Properties samaccountname,useraccountcontrol,memberof`| Get Kerberos constrained delegation users|
+| `.\SharpView.exe Get-DomainUser -LDAPFilter "(userAccountControl:1.2.840.113556.1.4.803:=524288)"`| Get users that allow unconstrained delegration|
+| `Get-DomainUser -Properties samaccountname,description \| Where {$_.description -ne $null}` | Get users where description isn't blank  | 
+| `.\SharpView.exe Get-DomainUser -SPN -Properties samaccountname,memberof,serviceprincipalname` | Get Service Principal Names (SPNs) which could be subjected to kerberoasting |
+| `Find-ForeignGroup `| Enumerate any users from other (foreign) domains with group membership within any groups in our current domain. Credentials for this user can be obtained from the NTDS database and used to authenticate to the foreign domain |
 | `New-DomainUser`                   | Creates a new domain user (assuming appropriate permissions) and returns the user object          |
 | `Set-DomainUserPassword`           | Sets the password for a given user identity and returns the user object                           |
 | `Get-DomainUserEvent`              | Enumerates account logon events (ID 4624) and logon with explicit credential events               |
