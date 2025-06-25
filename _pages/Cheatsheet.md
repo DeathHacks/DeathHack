@@ -4532,8 +4532,8 @@ dir /b/s "<FILE>"
 
 ### SharpView Cheatsheet 
 
-| **Command** | **Description** |
-| --------------|-------------------|
+| Command                                                      | Description                                                  |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
 | `Get-DomainPolicy` | View the domain password policy |
 | `.\SharpView.exe ConvertTo-SID -Name sally.jones`            | Convert a username to a SID |
 | `.\SharpView.exe Convert-ADName -ObjectName S-1-5-21-2974783224-3764228556-2640795941-1724` | Convert a SID to a username |
@@ -4570,8 +4570,8 @@ dir /b/s "<FILE>"
 
 #### Sharpview Domain/LDAP Functions 
 
-| **Command**                            | **Description**                                                                                       |
-|------------------------------------|---------------------------------------------------------------------------------------------------|
+| Command                                                      | Description                                                  |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
 | `Get-DomainDNSZone`                | Enumerates the Active Directory DNS zones for a given domain                                      |
 | `Get-DomainDNSRecord`              | Enumerates the Active Directory DNS records for a given zone                                      |
 | `Get-Domain`                       | Returns the domain object for the current (or specified) domain                                   |
@@ -4606,8 +4606,8 @@ dir /b/s "<FILE>"
 
 #### Sharpview GPO Functions 
 
-| **Command**                                 | **Description**                                                                                                                           |
-|-----------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|
+| Command                                                      | Description                                                  |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
 | `Get-DomainGPO`                         | Returns all GPOs or specific GPO objects in AD                                                                                        |
 | `.\SharpView.exe Get-DomainGPO \| findstr displayname`| Return all GPO object displaynames |
 | `Get-DomainGPO -ComputerIdentity WS01 \| select displayname` | Find GPO assigned to specific host |
@@ -4620,8 +4620,8 @@ dir /b/s "<FILE>"
 
 The computer enumeration functions can gather information about user sessions, test for local admin access, search for file shares and interesting files. 
 
-| **Command**                            | **Description**                                                                                                  |
-|------------------------------------|--------------------------------------------------------------------------------------------------------------|
+| Command                                                      | Description                                                  |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
 | `Get-NetLocalGroup`                | Enumerates the local groups on the local (or remote) machine                                                 |
 | `Get-NetLocalGroupMember`          | Enumerates members of a specific local group on the local (or remote) machine                                |
 | `.\SharpView.exe Get-NetShare -ComputerName DC01` | Enumerate open shares on remote machine |
@@ -4644,8 +4644,8 @@ The computer enumeration functions can gather information about user sessions, t
 
 The 'meta' functions can be used to find where domain users are logged in, look for specific processes on remote hosts, find domain shares, find files on domain shares, and test where our current user has local admin rights.
 
-| **Command**                             | **Description**                                                                                      |
-|-------------------------------------|--------------------------------------------------------------------------------------------------|
+| Command                                                      | Description                                                  |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
 | `Find-DomainUserLocation`           | Finds domain machines where specific users are logged into                                       |
 | `Find-DomainProcess`                | Finds domain machines where specific processes are currently running                             |
 | `Find-DomainUserEvent`              | Finds logon events on the current (or remote) domain for specified users                         |
@@ -4658,8 +4658,8 @@ The 'meta' functions can be used to find where domain users are logged in, look 
 
 The domain trust functions provide us with the tools we need to enumerate information that can be used to mount cross-trust attacks. 
 
-| **Command**                          | **Description**                                                                                      |
-|----------------------------------|--------------------------------------------------------------------------------------------------|
+| Command                                                      | Description                                                  |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
 | `Get-DomainTrust`                | Returns all domain trusts for the current or specified domain                                   |
 | `Get-ForestTrust`                | Returns all forest trusts for the current or specified forest                                   |
 | `Get-DomainForeignUser`          | Enumerates users who are in groups outside of the user's domain                                 |
