@@ -4530,7 +4530,7 @@ dir /b/s "<FILE>"
 | `sudo mv kerbrute_linux_amd64 /usr/local/bin/kerbrute`       | Used to move the `Kerbrute` binary to a directory can be set to be in a Linux user's path. Making it easier to use the tool. |
 | `./kerbrute_linux_amd64 userenum -d INLANEFREIGHT.LOCAL --dc 172.16.5.5 jsmith.txt -o kerb-results` | Runs the Kerbrute tool to discover usernames in the domain (`INLANEFREIGHT.LOCAL`) specified proceeding the `-d` option and the associated domain controller specified proceeding `--dc`using a wordlist and outputs (`-o`) the results to a specified file. Performed from a Linux-based host. |
 
-### SharpView Cheatsheet 
+### SharpView/Powerview Cheatsheet 
 
  | Command | Description |
 |--------|-------------|
@@ -4570,7 +4570,7 @@ dir /b/s "<FILE>"
 
 
 
-#### SharpView Domain/LDAP Functions
+#### Domain/LDAP Functions
 
 | Command | Description |
 |--------|-------------|
@@ -4585,6 +4585,9 @@ dir /b/s "<FILE>"
 | `Get-DomainUser` | Returns all users or specific user objects in AD |
 | `(Get-DomainUser).count` | Return count of how many users are in target domain |
 | `Get-DomainUser * -Domain DOMAIN \| Select-Object -Property name,samaccountname,description,memberof,whencreated,pwdlastset,lastlogontimestamp,accountexpires,admincount,userprincipalname,serviceprincipalname,mail,useraccountcontrol \| Export-Csv .\DOMAIN_users.csv -NoTypeInformation` | Enumerate all domain users and export to CSV |
+| `Get-DomainUser -SPN -Domain freightlogistics.local \| select samaccountname,memberof,serviceprincipalname \| fl`| Get users with Service Principal Names (SPNs) set in other domains that we can authenticate into via inbound or bi-directional trust relationships with forest-wide authentication allowing all users to authenticate across a trust or selective-authentication set up which allows specific users to authenticate.|
+|`Get-DomainUser -Properties samaccountname,pwdlastset,lastlogon -Domain InlaneFreight.local \| select samaccountname, pwdlastset, lastlogon \| Sort-Object -Property pwdlastset`| Get all users and sort by password last set|
+|`Get-DomainUser -Properties samaccountname,pwdlastset,lastlogon -Domain InlaneFreight.local \| select samaccountname, pwdlastset, lastlogon \| where { $_.pwdlastset -lt (Get-Date).addDays(-90) }`| Get all users with password set before certain date|
 | `.\SharpView.exe Get-DomainUser -KerberosPreauthNotRequired -Properties samaccountname,useraccountcontrol,memberof` | Obtain list of all users that do not require Kerberos pre-auth for ASREPRoast attack potential |
 | `.\SharpView.exe Get-DomainUser -TrustedToAuth -Properties samaccountname,useraccountcontrol,memberof` | Get Kerberos constrained delegation users |
 | `.\SharpView.exe Get-DomainUser -LDAPFilter "(userAccountControl:1.2.840.113556.1.4.803:=524288)"` | Get users that allow unconstrained delegation |
@@ -4612,9 +4615,12 @@ dir /b/s "<FILE>"
 | `Add-DomainGroupMember` | Adds a user or group to an existing domain group |
 | `Get-DomainFileServer` | Returns a list of servers likely functioning as file servers |
 | `Get-DomainDFSShare` | Returns all DFS shares for the domain |
+| `Find-ManagedSecurityGroups \| select GroupName`| Returns managed security groups. Groups have non-administrators the right to add members to AD security groups and distro groups and is set by modifiying the managedBy attribute. |
+| `Get-DomainManagedSecurityGroup`| Returns all Domain Managed Security Groups  |
+| `Get-DomainObjectAcl -Identity 'Security Operations' \| ?{ $_.SecurityIdentifier -eq $sid}`|  |
 
 
-#### SharpView GPO Functions
+#### GPO Functions
 
 | Command | Description |
 |--------|-------------|
@@ -4626,7 +4632,7 @@ dir /b/s "<FILE>"
 | `Get-DomainGPOComputerLocalGroupMapping` | Maps computers to local group memberships via GPO correlation |
 | `Get-DomainPolicy` | Returns the default or domain controller policy |
 
-#### Sharpview Computer Enumeration 
+#### Computer Enumeration 
 
 The computer enumeration functions can gather information about user sessions, test for local admin access, search for file shares and interesting files. 
 
@@ -4651,7 +4657,7 @@ The computer enumeration functions can gather information about user sessions, t
 | `Get-WMIProcess` | Lists running processes and owners |
 | `Find-InterestingFile` | Searches for files matching specific criteria |
 
-#### SharpView Domain Meta Functions
+#### Domain Meta Functions
 
 The 'meta' functions can be used to find where domain users are logged in, look for specific processes on remote hosts, find domain shares, find files on domain shares, and test where our current user has local admin rights.
 
@@ -4666,7 +4672,7 @@ The 'meta' functions can be used to find where domain users are logged in, look 
 | `Find-DomainLocalGroupMember` | Enumerates members of local groups on domain machines |
 
 
-#### Sharpview Trusts & Inter-Domain Enumeration 
+#### Trusts & Inter-Domain Enumeration 
 
 The domain trust functions provide us with the tools we need to enumerate information that can be used to mount cross-trust attacks. 
 
