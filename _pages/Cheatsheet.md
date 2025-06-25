@@ -4581,6 +4581,7 @@ dir /b/s "<FILE>"
 | `Get-ForestGlobalCatalog`          | Returns all global catalogs for the current (or specified) forest                                 |
 | `Find-DomainObjectPropertyOutlier` | Finds user/group/computer objects in AD that have 'outlier' properties set                        |
 | `Get-DomainUser`                   | Returns all users or specific user objects in AD                                                  |
+| `(Get-DomainUser).count`           | Return count of how many users are in target domain                                               |
 | `New-DomainUser`                   | Creates a new domain user (assuming appropriate permissions) and returns the user object          |
 | `Set-DomainUserPassword`           | Sets the password for a given user identity and returns the user object                           |
 | `Get-DomainUserEvent`              | Enumerates account logon events (ID 4624) and logon with explicit credential events               |
@@ -4639,8 +4640,31 @@ The computer enumeration functions can gather information about user sessions, t
 | `Get-WMIProcess`                   | Returns a list of processes and their owners on the local or remote machine                                  |
 | `Find-InterestingFile`            | Searches for files on the given path that match a series of specified criteria                               |
 
+#### Sharpview Domain Meta functions  
 
+The 'meta' functions can be used to find where domain users are logged in, look for specific processes on remote hosts, find domain shares, find files on domain shares, and test where our current user has local admin rights.
 
+| **Command**                             | **Description**                                                                                      |
+|-------------------------------------|--------------------------------------------------------------------------------------------------|
+| `Find-DomainUserLocation`           | Finds domain machines where specific users are logged into                                       |
+| `Find-DomainProcess`                | Finds domain machines where specific processes are currently running                             |
+| `Find-DomainUserEvent`              | Finds logon events on the current (or remote) domain for specified users                         |
+| `Find-DomainShare`                  | Finds reachable shares on domain machines                                                        |
+| `Find-InterestingDomainShareFile`   | Searches for files matching specific criteria on readable shares in the domain                   |
+| `Find-LocalAdminAccess`             | Finds machines in the domain where the current user has local administrator access               |
+| `Find-DomainLocalGroupMember`       | Enumerates the members of specified local group on machines in the domain                        |
+
+#### Sharpview Trusts & Inter-Domain Enumeration 
+
+The domain trust functions provide us with the tools we need to enumerate information that can be used to mount cross-trust attacks. 
+
+| **Command**                          | **Description**                                                                                      |
+|----------------------------------|--------------------------------------------------------------------------------------------------|
+| `Get-DomainTrust`                | Returns all domain trusts for the current or specified domain                                   |
+| `Get-ForestTrust`                | Returns all forest trusts for the current or specified forest                                   |
+| `Get-DomainForeignUser`          | Enumerates users who are in groups outside of the user's domain                                 |
+| `Get-DomainForeignGroupMember`   | Enumerates groups with users outside of the group's domain and returns each foreign member      |
+| `Get-DomainTrustMapping`         | Enumerates all trusts for the current domain and recursively enumerates trusts for each domain  |
 ### LLMNR/NTB-NS Poisoning 
 
 | Command                                                      | Description                                                  |
