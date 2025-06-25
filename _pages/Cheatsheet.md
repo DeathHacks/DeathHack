@@ -4558,9 +4558,10 @@ dir /b/s "<FILE>"
 | `.\SharpView.exe Get-DomainGroup -AdminCount` | List protected groups |
 | `.\SharpView.exe Find-ManagedSecurityGroups` | List managed security groups |
 | `Get-NetLocalGroup -ComputerName WS01` | Get local groups on a host |
-| `.\SharpView.exe Get-NetLocalGroupMember -ComputerName WS01` | Get members of a local group |
+| `.\SharpView.exe Get-NetLocalGroupMember -ComputerName HOST -GroupName GROUP` | Get members of a local group |
 | `.\SharpView.exe Get-DomainComputer -Unconstrained` | Find computers that allow unconstrained delegation |
 | `Get-DomainComputer -TrustedToAuth` | Find computers set with constrained delegation |
+| `.\SharpView.exe Get-DomainComputer -Properties dnshostname,operatingsystem,lastlogontimestamp,useraccountcontrol`||
 | `Get-DomainObjectAcl -Identity harry.jones` | Enumerate ACLs on a user |
 | `Find-InterestingDomainAcl` | Find objects in the domain with modification rights over non built-in objects |
 | `Get-PathAcl "\\SQL01\DB_backups"` | Find the ACLs set on a directory |
@@ -4569,7 +4570,7 @@ dir /b/s "<FILE>"
 | `Get-DomainTrustMapping` | Enumerate trusts for our domain/reachable domains |
 
 ```
-Check all hosts that a given user has local admin access. 
+Check all hosts that a given user has local admin access.  
 $sid = Convert-NameToSid harry.jones
 $computers = Get-DomainComputer -Properties dnshostname | select -ExpandProperty dnshostname
 foreach ($line in $computers) {Get-NetLocalGroupMember -ComputerName $line | ? {$_.SID -eq $sid}}
