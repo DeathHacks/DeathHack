@@ -4568,6 +4568,13 @@ dir /b/s "<FILE>"
 | `Get-DomainGPO \| Get-ObjectAcl` | Find GPO permissions |
 | `Get-DomainTrustMapping` | Enumerate trusts for our domain/reachable domains |
 
+```
+Check all hosts that a given user has local admin access. 
+$sid = Convert-NameToSid harry.jones
+$computers = Get-DomainComputer -Properties dnshostname | select -ExpandProperty dnshostname
+foreach ($line in $computers) {Get-NetLocalGroupMember -ComputerName $line | ? {$_.SID -eq $sid}}
+```
+
 
 
 #### Domain/LDAP Functions
