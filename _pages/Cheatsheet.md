@@ -4561,7 +4561,10 @@ dir /b/s "<FILE>"
 | `.\SharpView.exe Get-NetLocalGroupMember -ComputerName HOST -GroupName GROUP` | Get members of a local group |
 | `.\SharpView.exe Get-DomainComputer -Unconstrained` | Find computers that allow unconstrained delegation |
 | `Get-DomainComputer -TrustedToAuth` | Find computers set with constrained delegation |
+| `Get-DomainComputer -Properties dnshostname,operatingsystem,lastlogontimestamp,useraccountcontrol \| Export-Csv .\DOMAIN_computers.csv -NoTypeInformation`| gather is the hostname, operating system, and User Account Control (UAC) attributes|
 | `.\SharpView.exe Get-DomainComputer -Properties dnshostname,operatingsystem,lastlogontimestamp,useraccountcontrol`||
+| `.\SharpView.exe Get-DomainComputer -Unconstrained -Properties dnshostname,useraccountcontrol`| Get any computers within domain which allow unconstrained delegation (allows a service to request access to any other service on behalf of a user, without requiring additional authentication) |
+| `Get-DomainComputer -TrustedToAuth \| select -Property dnshostname,useraccountcontrol`|Get any computer with contrained delegration. (Impersonate specific SPNs) |
 | `Get-DomainObjectAcl -Identity harry.jones` | Enumerate ACLs on a user |
 | `Find-InterestingDomainAcl` | Find objects in the domain with modification rights over non built-in objects |
 | `Get-PathAcl "\\SQL01\DB_backups"` | Find the ACLs set on a directory |
